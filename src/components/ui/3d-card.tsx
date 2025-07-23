@@ -1,16 +1,7 @@
 import { cn } from "@/lib/utils";
-
-import React, {
-  createContext,
-  useState,
-  useRef,
-  useEffect,
-} from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useMouseEnter } from "../hooks/use-mouse-enter";
-
-const MouseEnterContext = createContext<
-  [boolean, React.Dispatch<React.SetStateAction<boolean>>] | undefined
->(undefined);
+import MouseEnterContext from "../hooks/use-mouse-enter"; // Import context
 
 export const CardContainer = ({
   children,
@@ -45,6 +36,7 @@ export const CardContainer = ({
     setIsMouseEntered(false);
     containerRef.current.style.transform = `rotateY(0deg) rotateX(0deg)`;
   };
+
   return (
     <MouseEnterContext.Provider value={[isMouseEntered, setIsMouseEntered]}>
       <div
@@ -144,4 +136,3 @@ export const CardItem = ({
     </Tag>
   );
 };
-

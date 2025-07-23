@@ -13,5 +13,28 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-
+  base: '/',
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    minify: 'terser',
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'vendor'
+            }
+            if (id.includes('three')) {
+              return 'three'
+            }
+            return 'vendor'
+          }
+        },
+      },
+    },
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'three']
+  },
 })

@@ -3,10 +3,10 @@ import { cn } from "@/lib/utils";
 import React, {
   createContext,
   useState,
-  useContext,
   useRef,
   useEffect,
 } from "react";
+import { useMouseEnter } from "../hooks/use-mouse-enter";
 
 const MouseEnterContext = createContext<
   [boolean, React.Dispatch<React.SetStateAction<boolean>>] | undefined
@@ -145,11 +145,3 @@ export const CardItem = ({
   );
 };
 
-// Create a hook to use the context
-export const useMouseEnter = () => {
-  const context = useContext(MouseEnterContext);
-  if (context === undefined) {
-    throw new Error("useMouseEnter must be used within a MouseEnterProvider");
-  }
-  return context;
-};

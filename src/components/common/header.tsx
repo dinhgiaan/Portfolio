@@ -49,7 +49,10 @@ const Header = () => {
                   })
 
                   // Reset scrolling flag after scroll completes
-                  clearTimeout(scrollTimeoutRef.current)
+                  if (scrollTimeoutRef.current) {
+                        clearTimeout(scrollTimeoutRef.current)
+                  }
+
                   scrollTimeoutRef.current = setTimeout(() => {
                         setIsScrolling(false)
                   }, 1000) // Adjust timeout based on scroll duration

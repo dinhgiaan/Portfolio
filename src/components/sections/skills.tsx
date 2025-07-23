@@ -42,8 +42,8 @@ const SkillsSection = () => {
       return (
             <section className="">
                   <div className="container mx-auto px-4">
-                        <div className="text-center mb-16">
-                              <h2 className="text-3xl font-bold mb-4 ">
+                        <div className="text-center mb-8">
+                              <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-orange-500 bg-clip-text text-transparent">
                                     Skills & Technologies
                               </h2>
                               <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
@@ -53,9 +53,8 @@ const SkillsSection = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                               {skillCategories.map((category, index) => (
-                                    <Card key={index} className="group hover:shadow-lg transition-shadow duration-300 border-2 hover:border-primary/20 hover:scale-110">
+                                    <Card key={index} className="group hover:shadow-lg border-2 hover:border-primary/20 hover:scale-110 transition-all duration-300 ease-in-out">
                                           <CardContent className="p-6 cursor-default">
-                                                {/* Category Header */}
                                                 <div className="flex items-center gap-3 mb-6">
                                                       <div className={`w-3 h-3 rounded-full ${category.color}`} />
                                                       <h3 className="font-semibold text-lg">{category.title}</h3>
@@ -85,9 +84,15 @@ const SkillsSection = () => {
 
                         <div className="mt-12 text-center">
                               <p className="text-muted-foreground mb-4">All Technologies</p>
+
                               <div className="flex flex-wrap justify-center gap-2 cursor-default">
                                     {skillCategories.flatMap(cat => cat.skills).map((skill, index) => (
-                                          <Badge key={index} variant="secondary" className="px-3 py-1">
+                                          <Badge
+                                                key={index}
+                                                variant="secondary"
+                                                className="px-3 py-1 transition-all duration-300 ease-in-out 
+                   hover:scale-110 hover:mx-2"
+                                          >
                                                 {skill.name}
                                           </Badge>
                                     ))}

@@ -26,7 +26,7 @@ const HeroSection = () => {
 
       return (
             <section className="min-w-full">
-                  <h2 className="text-3xl font-bold text-center mb-10 bg-gradient-to-r from-purple-600 to-orange-500 bg-clip-text text-transparent">
+                  <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-purple-600 to-orange-500 bg-clip-text text-transparent">
                         About Me
                   </h2>
 
@@ -38,8 +38,8 @@ const HeroSection = () => {
                                                 src="/assets/avatar.png"
                                                 height="400"
                                                 width="400"
-                                                className="h-91 w-full object-cover rounded-xl group-hover/card:shadow-2xl transition-all duration-300"
-                                                alt="Dinh Gia An - Frontend Developer profile photo"
+                                                className="h-92 w-full object-cover rounded-xl group-hover/card:shadow-2xl transition-all duration-300"
+                                                alt="Dinh Gia An - Developer profile photo"
                                           />
                                     </CardItem>
                               </CardContainer>
@@ -99,7 +99,7 @@ const HeroSection = () => {
 
                               <div className="w-fit ml-auto">
                                     <div className="relative rounded-sm transition-all duration-300 hover:scale-105">
-                                          <Menubar className=" rounded-sm bg-black border-0">
+                                          <Menubar className="rounded-none border-0">
                                                 <MenubarMenu>
                                                       <div className="glow-wrapper">
                                                             <div className="glow-layer"></div>

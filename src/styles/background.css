@@ -1,0 +1,19 @@
+@keyframes subtle-grid-pulse {
+      0% {
+            opacity: 0.18;
+      }
+
+      100% {
+            opacity: 0.25;
+      }
+}
+
+@keyframes subtle-light-pulse {
+      0% {
+            opacity: 0.35;
+      }
+
+      100% {
+            opacity: 0.45;
+      }
+}

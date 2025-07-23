@@ -37,7 +37,7 @@ const Header = () => {
             const element = document.getElementById(sectionId)
             if (element) {
                   setIsScrolling(true)
-                  setActiveIndex(index) // Set immediately when clicking
+                  setActiveIndex(index)
 
                   const headerHeight = 80
                   const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
@@ -48,29 +48,26 @@ const Header = () => {
                         behavior: 'smooth'
                   })
 
-                  // Reset scrolling flag after scroll completes
                   if (scrollTimeoutRef.current) {
                         clearTimeout(scrollTimeoutRef.current)
                   }
 
                   scrollTimeoutRef.current = setTimeout(() => {
                         setIsScrolling(false)
-                  }, 1000) // Adjust timeout based on scroll duration
+                  }, 1000)
             }
       }, [])
 
       const getActiveIndexFromScroll = useCallback(() => {
-            if (isScrolling) return // Don't update during programmatic scroll
+            if (isScrolling) return
 
-            const headerHeight = 100 // Slightly larger threshold
+            const headerHeight = 100
             const sections = NAVIGATION_ITEMS.map(item => item.sectionId)
 
-            // Check from bottom to top to handle overlapping sections
             for (let i = sections.length - 1; i >= 0; i--) {
                   const section = document.getElementById(sections[i])
                   if (section) {
                         const rect = section.getBoundingClientRect()
-                        // Section is considered active if its top is above the threshold
                         if (rect.top <= headerHeight) {
                               setActiveIndex(i)
                               return
@@ -89,13 +86,11 @@ const Header = () => {
             setIsMobileMenuOpen((prev) => !prev)
       }, [])
 
-      // Update indicator when activeIndex changes
       useEffect(() => {
             const timer = setTimeout(updateIndicator, 0)
             return () => clearTimeout(timer)
       }, [updateIndicator])
 
-      // Handle scroll events
       useEffect(() => {
             let ticking = false
 
@@ -113,7 +108,6 @@ const Header = () => {
             return () => window.removeEventListener('scroll', handleScroll)
       }, [getActiveIndexFromScroll])
 
-      // Handle resize events
       useEffect(() => {
             let resizeTimeout: NodeJS.Timeout
 
@@ -134,7 +128,6 @@ const Header = () => {
             }
       }, [updateIndicator])
 
-      // Cleanup timeout on unmount
       useEffect(() => {
             return () => {
                   if (scrollTimeoutRef.current) {
@@ -204,7 +197,10 @@ const Header = () => {
                                     </nav>
 
                                     <div className="flex-1 flex justify-end items-center space-x-3">
-                                          <Button className="hidden lg:inline-flex px-6 py-2 text-sm font-medium">
+                                          <Button
+                                                className="hidden lg:inline-flex px-6 py-2 text-sm font-medium cursor-pointer"
+                                                onClick={() => window.open('https://mail.google.com/mail/?view=cm&fs=1&to=dinhgiaanforwork@gmail.com', '_blank')}
+                                          >
                                                 Hire Me
                                           </Button>
                                           <Button className="lg:hidden px-4 py-2 text-sm">Hire</Button>

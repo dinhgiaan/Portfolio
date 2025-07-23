@@ -25,9 +25,6 @@ export default defineConfig({
             if (id.includes('react') || id.includes('react-dom')) {
               return 'vendor'
             }
-            if (id.includes('three')) {
-              return 'three'
-            }
             return 'vendor'
           }
         },
@@ -35,6 +32,6 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'three']
+    include: ['react', 'react-dom']
   },
 })

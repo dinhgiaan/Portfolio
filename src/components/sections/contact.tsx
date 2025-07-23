@@ -13,7 +13,7 @@ const ContactSection = () => {
                   icon: Mail,
                   label: "Email",
                   value: myInfo.email,
-                  href: `mailto:${myInfo.email}`,
+                  href: `https://mail.google.com/mail/?view=cm&fs=1&to=${myInfo.email}`,
                   color: "text-blue-600",
                   bgColor: "bg-blue-50 hover:bg-blue-100",
                   canCopy: true
@@ -34,7 +34,7 @@ const ContactSection = () => {
                   href: myInfo.github,
                   color: "text-gray-800",
                   bgColor: "bg-gray-50 hover:bg-gray-100",
-                  canCopy: false
+                  canCopy: true
             },
             {
                   icon: Linkedin,
@@ -43,7 +43,7 @@ const ContactSection = () => {
                   href: myInfo.linkedin,
                   color: "text-blue-700",
                   bgColor: "bg-blue-50 hover:bg-blue-100",
-                  canCopy: false
+                  canCopy: true
             }
       ]
 
@@ -59,8 +59,8 @@ const ContactSection = () => {
 
       return (
             <div className="container mx-auto px-4">
-                  <div className="text-center mb-16">
-                        <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                  <div className="text-center mb-8">
+                        <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-orange-500 bg-clip-text text-transparent">
                               Get In Touch
                         </h2>
                         <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
@@ -81,15 +81,15 @@ const ContactSection = () => {
                                           </p>
                                     </div>
 
-                                    <div className="flex justify-center gap-2 mb-6">
+                                    <div className="flex justify-center gap-2 mb-6 cursor-default">
                                           <Badge variant="secondary">Available for work</Badge>
                                           <Badge variant="outline">Open to collaborations</Badge>
                                     </div>
 
                                     <Button
                                           size="lg"
-                                          className="bg-primary hover:bg-primary/90"
-                                          onClick={() => window.open(`mailto:${myInfo.email}`, '_blank')}
+                                          className="bg-primary hover:bg-primary/90 cursor-pointer"
+                                          onClick={() => window.open('https://mail.google.com/mail/?view=cm&fs=1&to=dinhgiaanforwork@gmail.com', '_blank')}
                                     >
                                           <Mail className="w-4 h-4 mr-2" />
                                           Send me an email
@@ -125,7 +125,7 @@ const ContactSection = () => {
                                                                         <Button
                                                                               size="sm"
                                                                               variant="ghost"
-                                                                              className="h-8 w-8 p-0"
+                                                                              className="h-8 w-8 p-0 cursor-pointer"
                                                                               onClick={() => copyToClipboard(item.value)}
                                                                         >
                                                                               <Copy className="w-3 h-3" />
@@ -135,7 +135,7 @@ const ContactSection = () => {
                                                                   <Button
                                                                         size="sm"
                                                                         variant="ghost"
-                                                                        className="h-8 w-8 p-0"
+                                                                        className="h-8 w-8 p-0 cursor-pointer"
                                                                         onClick={() => window.open(item.href, '_blank')}
                                                                   >
                                                                         <ExternalLink className="w-3 h-3" />

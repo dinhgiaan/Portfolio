@@ -1,0 +1,68 @@
+.glow-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px;
+      border-radius: 10px;
+      box-shadow: 16px 16px 20px #0000008c;
+      overflow: hidden;
+}
+
+.glow-layer {
+      position: absolute;
+      inset: 0;
+      margin: -50%;
+      background: conic-gradient(transparent, transparent, #00a6ff);
+      animation: spin-slow 2s linear infinite;
+      opacity: 0.7;
+}
+
+.trigger-layer {
+      position: relative;
+      z-index: 10;
+      padding: 0.5rem 1rem;
+      background-color: #1c1c1c;
+      border-radius: 10px;
+      box-shadow: inset 20px 20px 20px #0000008c;
+}
+
+.trigger-button {
+      background: linear-gradient(to right, #9333ea, #f97316);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.05s ease;
+}
+
+.trigger-button:hover {
+      background: linear-gradient(to right, #7e22ce, #ea580c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+      .trigger-button {
+            background: linear-gradient(to right, #a78bfa, #fdba74);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+      }
+
+      .trigger-button:hover {
+            background: linear-gradient(to right, #c4b5fd, #fed7aa);
+
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+      }
+}
+
+@keyframes spin-slow {
+      0% {
+            transform: rotate(0deg);
+      }
+
+      100% {
+            transform: rotate(360deg);
+      }
+}

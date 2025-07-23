@@ -1,3 +1,4 @@
+import { SpaceBackground } from "./components/background/space.background"
 import Header from "./components/common/header"
 import ContactSection from "./components/sections/contact"
 import HeroSection from "./components/sections/hero"
@@ -7,7 +8,7 @@ import SkillsSection from "./components/sections/skills"
 const App = () => {
   return (
     <div className="min-h-screen flex flex-col relative">
-      {/* <SpaceBackground /> */}
+      <SpaceBackground />
 
       <section className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
         <Header />

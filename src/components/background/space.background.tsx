@@ -28,13 +28,13 @@ interface TrailParticleUserData {
 
 export const SpaceBackground: React.FC = () => {
       const mountRef = useRef<HTMLDivElement>(null)
-      const sceneRef = useRef<THREE.Scene>()
-      const rendererRef = useRef<THREE.WebGLRenderer>()
+      const sceneRef = useRef<THREE.Scene | null>(null)
+      const rendererRef = useRef<THREE.WebGLRenderer | null>(null)
       const starsRef = useRef<THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>[]>([])
       const brightStarsRef = useRef<THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>[]>([])
       const meteorsRef = useRef<THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>[]>([])
       const trailParticlesRef = useRef<THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial>[]>([])
-      const animationRef = useRef<number>()
+      const animationRef = useRef<number | null>(null)
       const lastMeteorWaveRef = useRef<number>(0)
 
       const starColors: string[] = ["#ffffff", "#ffffcc", "#ffcccc", "#ccccff", "#ccffff"]

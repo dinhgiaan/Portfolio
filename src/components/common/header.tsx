@@ -18,7 +18,7 @@ const Header = () => {
 
       const itemRefs = useRef<(HTMLDivElement | null)[]>([])
       const containerRef = useRef<HTMLDivElement>(null)
-      const scrollTimeoutRef = useRef<NodeJS.Timeout>()
+      const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
       const updateIndicator = useCallback(() => {
             const activeItem = itemRefs.current[activeIndex]
@@ -231,8 +231,8 @@ const Header = () => {
                         {/* Mobile Menu */}
                         <div
                               className={`md:hidden transition-all duration-300 ease-in-out ${isMobileMenuOpen
-                                          ? "max-h-screen opacity-100"
-                                          : "max-h-0 opacity-0 overflow-hidden"
+                                    ? "max-h-screen opacity-100"
+                                    : "max-h-0 opacity-0 overflow-hidden"
                                     }`}
                         >
                               <nav className="px-4 py-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">

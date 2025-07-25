@@ -99,7 +99,7 @@ const HeroSection = () => {
 
                               <div className="w-fit ml-auto">
                                     <div className="relative rounded-sm transition-all duration-300 hover:scale-105">
-                                          <Menubar className="rounded-none border-0">
+                                          <Menubar className="rounded-sm border-0">
                                                 <MenubarMenu>
                                                       <div className="glow-wrapper">
                                                             <div className="glow-layer"></div>

@@ -11,7 +11,7 @@ const ProjectSection = () => {
                   description:
                         "A comprehensive online book reading platform with complete user management and payment integration. Features include user authentication, book catalog, reading interface, and admin dashboard.",
                   image: "/assets/novelnest-homepage.webp",
-                  tech: ["React", "Node.js", "MongoDB", "Express", "JWT", "Stripe"],
+                  tech: ["Next.js", "TypeScript", "Node.js", "MongoDB", "Express", "JWT", "Stripe", "Axios", "NextAuth", "SWR", "Zustand"],
                   sourceCode: [
                         {
                               label: "Frontend",
@@ -33,15 +33,15 @@ const ProjectSection = () => {
                   description:
                         "Mobile-first design coding course platform with advanced animations and interactive learning features. Includes video streaming, progress tracking, and certificate generation.",
                   image: "/assets/codeguru-homepage.webp",
-                  tech: ["Next.js", "TypeScript", "Prisma", "PostgreSQL", "NextAuth"],
+                  tech: ["Next.js", "TypeScript", "MongoDB", "Redis", "NextAuth", "Stripe", "Axios", "Redux Toolkit"],
                   sourceCode: [
                         {
                               label: "Frontend",
-                              url: "https://github.com/dinhgiaan/CodeGuru-Frontend",
+                              url: "https://github.com/dinhgiaan/CodeGuru-FE",
                         },
                         {
                               label: "Backend",
-                              url: "https://github.com/dinhgiaan/CodeGuru-Backend",
+                              url: "https://github.com/dinhgiaan/CodeGuru-BE",
                         },
                   ],
                   liveDemo: null, // Không có live demo
@@ -152,7 +152,12 @@ const ProjectSection = () => {
                                                                   </a>
                                                             </Button>
                                                       ) : (
-                                                            <div></div>
+                                                            <Button className="w-full cursor-default" variant={"secondary"} asChild>
+                                                                  <div>
+                                                                        <span>🤫</span>
+                                                                        Comming soon
+                                                                  </div>
+                                                            </Button>
                                                       )}
                                                 </CardItem>
                                           </div>
@@ -162,12 +167,14 @@ const ProjectSection = () => {
                   </div>
 
                   <div className="text-center mt-12">
-                        <button className="relative overflow-hidden rounded-lg px-2 py-1 gradient-glow hover:scale-110 transition-all duration-300 ease-in-out">
-                              <span className="relative z-10 flex items-center justify-center rounded-lg bg-black text-neutral-300 text-base font-medium cursor-pointer px-6 py-2">
-                                    <Github className="w-4 h-4 mr-2" />
-                                    View All Projects on GitHub
-                              </span>
-                        </button>
+                        <a href="https://github.com/dinhgiaan?tab=repositories" target="_blank">
+                              <button className="relative overflow-hidden rounded-lg px-2 py-1 gradient-glow hover:scale-110 transition-all duration-300 ease-in-out">
+                                    <span className="relative z-10 flex items-center justify-center rounded-lg bg-black text-neutral-300 text-base font-medium cursor-pointer px-6 py-2">
+                                          <Github className="w-4 h-4 mr-2" />
+                                          View All Projects on GitHub
+                                    </span>
+                              </button>
+                        </a>
                   </div>
             </div>
       )

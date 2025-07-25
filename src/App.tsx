@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/react"
 import { SubtleGridBackground } from "./components/background/background"
 import Header from "./components/common/header"
 import ContactSection from "./components/sections/contact"
@@ -9,8 +10,10 @@ const App = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+
       <SubtleGridBackground />
 
+      {/* Header Section */}
       <section className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
         <Header />
       </section>
@@ -37,6 +40,9 @@ const App = () => {
           <ContactSection />
         </section>
       </div>
+
+      {/* Anylytics */}
+      <Analytics />
     </div>
   )
 }

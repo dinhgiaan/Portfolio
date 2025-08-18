@@ -81,8 +81,8 @@
       inset: 0;
       top: 50%;
       aspect-ratio: 1 / 1;
-      background: conic-gradient(from 0deg, #9333ea, #ef4444, #f59e0b, #9333ea);
-      animation: discoGlow 4s linear infinite;
+      background: conic-gradient(from 0deg, #b566ff, #91d886, #85e6bc, #c9ace4);
+      animation: discoGlow 3s linear infinite;
       transform: scaleX(2);
       filter: blur(32px);
       z-index: 0;

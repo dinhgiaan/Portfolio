@@ -6,7 +6,7 @@ import {
       EASING,
       ANIMATION_PRESETS,
       type AnimationDirection
-} from './animation-variants';
+} from './animation.variants';
 
 interface ScrollInViewProps {
       children: React.ReactNode;

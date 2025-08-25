@@ -6,6 +6,8 @@ import HeroSection from "./components/sections/hero"
 import ProjectSection from "./components/sections/project"
 import SkillsSection from "./components/sections/skills"
 
+import ScrollIndicator from "./components/scroll.indicator"
+
 const App = () => {
 
   return (
@@ -18,10 +20,12 @@ const App = () => {
         <Header />
       </section>
 
+      <ScrollIndicator />
+
       <div className="px-4 md:px-40 pt-20">
 
         {/* Hero Section */}
-        <section id="hero-section" className="pt-7 mb-36">
+        <section id="hero-section" className="pt-7 mb-36" >
           <HeroSection />
         </section>
 

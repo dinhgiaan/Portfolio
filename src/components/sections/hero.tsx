@@ -108,7 +108,7 @@ const HeroSection = () => {
 
                                     <div className="w-fit ml-auto">
                                           <div className="relative rounded-sm transition-all duration-300 hover:scale-105">
-                                                <Menubar className="rounded-sm border-0" onClick={() => openPDF("/cv/DinhGiaAn_Resume.pdf")}>
+                                                <Menubar className="rounded-sm border-0" onClick={() => openPDF("/cv/Resume_DinhGiaAn.pdf")}>
                                                       <MenubarMenu>
                                                             <div className="glow-wrapper">
                                                                   <div className="glow-layer"></div>

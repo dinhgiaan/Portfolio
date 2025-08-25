@@ -27,7 +27,6 @@ const ScrollInView: React.FC<ScrollInViewProps> = ({
 }) => {
       const { initial, animate } = getAnimationVariants(direction);
 
-      // Sử dụng preset nếu được chỉ định
       const transitionConfig: Transition = preset
             ? { ...ANIMATION_PRESETS[preset], delay }
             : {
@@ -55,4 +54,4 @@ const ScrollInView: React.FC<ScrollInViewProps> = ({
       );
 };
 
-export default ScrollInView;
+export default ScrollInView

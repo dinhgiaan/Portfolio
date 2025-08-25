@@ -52,7 +52,7 @@ const ProjectSection = () => {
       return (
             <ScrollInView>
                   <div className="container mx-auto px-4">
-                        <div className="text-center mb-12 space-y-4">
+                        <div className="text-center mb-8 space-y-2">
                               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/50 dark:to-purple-900/70 border border-blue-200/50 dark:border-blue-700/50">
                                     <Code2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                                     <span className="text-xs font-medium text-blue-700 dark:text-blue-100">Featured Work</span>
@@ -192,4 +192,4 @@ const ProjectSection = () => {
       )
 }
 
-export default ProjectSection;
+export default ProjectSection

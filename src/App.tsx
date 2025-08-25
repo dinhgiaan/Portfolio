@@ -21,22 +21,22 @@ const App = () => {
       <div className="px-4 md:px-40 pt-20">
 
         {/* Hero Section */}
-        <section id="hero-section" className="pt-7 mb-44">
+        <section id="hero-section" className="pt-7 mb-36">
           <HeroSection />
         </section>
 
         {/*  Skills section */}
-        <section id="skills-section" className="mb-44">
+        <section id="skills-section" className="mb-36">
           <SkillsSection />
         </section>
 
         {/* Projects section */}
-        <section id="projects-section" className="mb-44">
+        <section id="projects-section" className="mb-36">
           <ProjectSection />
         </section>
 
         {/* Contact section */}
-        <section id="contact-section" className="mb-44">
+        <section id="contact-section" className="mb-36">
           <ContactSection />
         </section>
       </div>

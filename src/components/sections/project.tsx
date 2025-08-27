@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ExternalLink, Github, Eye, ArrowUpRight, Code2 } from "lucide-react"
+import { ExternalLink, Github, Eye, ArrowUpRight, Code2, Youtube } from "lucide-react"
 import { CardBody, CardContainer, CardItem } from "../ui/3d-card"
 import ScrollInView from "../scroll.inview"
 import ProjectImage from "../ui/project.img"
@@ -45,7 +45,7 @@ const ProjectSection = () => {
                               url: "https://github.com/dinhgiaan/CodeGuru-BE",
                         },
                   ],
-                  liveDemo: null,
+                  videoDemo: "https://youtu.be/F69pqAsAizY",
             },
       ]
 
@@ -89,12 +89,17 @@ const ProjectSection = () => {
                                                                         src={project.image}
                                                                         alt={project.title}
                                                                   />
-                                                                  {project.liveDemo && (
+
+                                                                  {(project.liveDemo || project.videoDemo) && (
                                                                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
                                                                               <Button size="sm" variant="secondary" asChild>
-                                                                                    <a href={project.liveDemo} target="_blank" rel="noopener noreferrer">
+                                                                                    <a
+                                                                                          href={project.liveDemo || project.videoDemo}
+                                                                                          target="_blank"
+                                                                                          rel="noopener noreferrer"
+                                                                                    >
                                                                                           <Eye className="w-4 h-4 mr-2" />
-                                                                                          Live Demo
+                                                                                          {project.liveDemo ? "Live Demo" : "Video Demo"}
                                                                                     </a>
                                                                               </Button>
                                                                         </div>
@@ -149,19 +154,21 @@ const ProjectSection = () => {
                                                             </CardItem>
 
                                                             <CardItem translateZ={5} className="min-h-[3rem] flex items-start">
-                                                                  {project.liveDemo ? (
+                                                                  {project.liveDemo && (
                                                                         <Button className="w-full" asChild>
                                                                               <a href={project.liveDemo} target="_blank" rel="noopener noreferrer">
                                                                                     <Eye className="w-4 h-4 mr-2" />
                                                                                     View Live Demo
                                                                               </a>
                                                                         </Button>
-                                                                  ) : (
-                                                                        <Button className="w-full cursor-default" variant={"secondary"} asChild>
-                                                                              <div>
-                                                                                    <span>🤫</span>
-                                                                                    Comming soon
-                                                                              </div>
+                                                                  )}
+
+                                                                  {project.videoDemo && (
+                                                                        <Button className="w-full" asChild>
+                                                                              <a href={project.videoDemo} target="_blank" rel="noopener noreferrer">
+                                                                                    <Youtube color="red" className="w-4 h-4 mr-2" />
+                                                                                    View Video Demo
+                                                                              </a>
                                                                         </Button>
                                                                   )}
                                                             </CardItem>

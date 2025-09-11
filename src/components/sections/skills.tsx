@@ -35,7 +35,8 @@ const SkillsSection = () => {
                   icon: Palette,
                   color: "purple",
                   skills: [
-                        { name: "TailwindCSS", tech: "tailwindcss" }
+                        { name: "TailwindCSS", tech: "tailwindcss" },
+                        { name: "Figma", tech: "figma" }
                   ]
             },
             {
@@ -44,8 +45,7 @@ const SkillsSection = () => {
                   color: "orange",
                   skills: [
                         { name: "Git", tech: "git" },
-                        { name: "Postman", tech: "postman" },
-                        { name: "Figma", tech: "figma" }
+                        { name: "Postman", tech: "postman" }
                   ]
             }
       ]

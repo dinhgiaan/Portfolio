@@ -1,68 +1,180 @@
+import { useEffect, useRef } from "react";
 
-export const SubtleGridBackground = () => {
-      return (
-            <div className="fixed inset-0 -z-10 overflow-hidden">
-                  <section className="relative w-full h-screen dark:bg-black bg-white overflow-hidden">
-                        <div className="absolute pointer-events-none bg-[#5e5e5e] w-1/3 h-16 blur-3xl mt-36 rotate-20"
-                        ></div>
-                  </section>
+interface Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
+  opacity: number;
+  color: string;
+}
 
-                  <div
-                        className="absolute inset-0 opacity-25 dark:hidden"
-                        style={{
-                              backgroundImage: `
-            linear-gradient(rgba(71, 85, 105, 0.4) 0.5px, transparent 0.5px),
-            linear-gradient(90deg, rgba(71, 85, 105, 0.4) 0.5px, transparent 0.5px)
-          `,
-                              backgroundSize: '30px 30px',
-                        }}
-                  />
+export const CyberpunkBackground = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-                  <div
-                        className="absolute inset-0 opacity-40 hidden dark:block"
-                        style={{
-                              backgroundImage: `
-            linear-gradient(rgba(243, 242, 242, 0.8) 0.5px, transparent 0.5px),
-            linear-gradient(90deg, rgba(243, 242, 242, 0.8) 0.5px, transparent 0.5px)
-          `,
-                              backgroundSize: '30px 30px',
-                        }}
-                  />
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-                  <div
-                        className="absolute inset-0 opacity-60"
-                        style={{
-                              background: `
-            radial-gradient(ellipse 150% 120% at 0% 0%,
-              rgba(255, 255, 255, 0.08) 0%,
-              rgba(255, 255, 255, 0.04) 30%,
-              rgba(255, 255, 255, 0.02) 50%,
-              transparent 70%
-            )
-          `
-                        }}
-                  />
+    let animationId: number;
+    let particles: Particle[] = [];
 
-                  <div
-                        className="absolute inset-0 opacity-30"
-                        style={{
-                              background: `
-            linear-gradient(135deg,
-              rgba(255, 255, 255, 0.05) 0%,
-              rgba(255, 255, 255, 0.02) 25%,
-              transparent 50%
-            )
-          `
-                        }}
-                  />
+    const colors = ["#00fff7", "#7b61ff", "#ff2d78", "#00ff9d"];
 
-                  <div
-                        className="absolute inset-0 opacity-15 mix-blend-soft-light"
-                        style={{
-                              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-                              backgroundSize: '150px 150px'
-                        }}
-                  />
-            </div>
-      );
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+
+    const initParticles = () => {
+      particles = [];
+      const count = Math.floor((canvas.width * canvas.height) / 12000);
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          size: Math.random() * 1.5 + 0.3,
+          opacity: Math.random() * 0.6 + 0.1,
+          color: colors[Math.floor(Math.random() * colors.length)],
+        });
+      }
+    };
+
+    const drawConnections = () => {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 100) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(0, 255, 247, ${0.08 * (1 - dist / 100)})`;
+            ctx.lineWidth = 0.5;
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+    };
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      drawConnections();
+
+      particles.forEach((p) => {
+        // Di chuyển particle
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Wrap around edges
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+
+        // Vẽ particle với glow effect
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color
+          .replace(")", `, ${p.opacity})`)
+          .replace("rgb", "rgba")
+          .replace("#", "");
+
+        // Dùng hex color trực tiếp
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = p.color;
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.opacity;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        ctx.shadowBlur = 0;
+      });
+
+      animationId = requestAnimationFrame(animate);
+    };
+
+    resize();
+    initParticles();
+    animate();
+
+    const handleResize = () => {
+      resize();
+      initParticles();
+    };
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      cancelAnimationFrame(animationId);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  return (
+    <div className="fixed inset-0 -z-10 overflow-hidden bg-[#050a0e]">
+      {/* Canvas particles */}
+      <canvas ref={canvasRef} className="absolute inset-0 opacity-70" />
+
+      {/* Grid overlay */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `
+                linear-gradient(rgba(0, 255, 247, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 247, 0.03) 1px, transparent 1px)
+              `,
+          backgroundSize: "40px 40px",
+        }}
+      />
+
+      {/* Scanline effect */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: `repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.05) 2px,
+                rgba(0, 0, 0, 0.05) 4px
+              )`,
+        }}
+      />
+
+      {/* Gradient blobs - cyberpunk glow */}
+      <div
+        className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full opacity-[0.07]"
+        style={{
+          background: "radial-gradient(circle, #7b61ff 0%, transparent 70%)",
+        }}
+      />
+      <div
+        className="absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full opacity-[0.06]"
+        style={{
+          background: "radial-gradient(circle, #00fff7 0%, transparent 70%)",
+        }}
+      />
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full opacity-[0.04]"
+        style={{
+          background: "radial-gradient(ellipse, #ff2d78 0%, transparent 60%)",
+        }}
+      />
+
+      {/* Vignette */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%)",
+        }}
+      />
+    </div>
+  );
 };

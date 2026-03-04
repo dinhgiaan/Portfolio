@@ -1,0 +1,180 @@
+/* ============================================
+   CYBERPUNK THEME VARIABLES
+   ============================================ */
+
+/* --- DARK MODE (default) --- */
+:root,
+.dark {
+  --bg-primary:    #050a0e;
+  --bg-card:       rgba(5, 10, 14, 0.85);
+  --text-primary:  #cdd6f4;
+  --text-secondary:#8892a4;
+  --text-muted:    rgba(136, 146, 164, 0.5);
+  --accent-cyan:   #00fff7;
+  --accent-purple: #7b61ff;
+  --accent-pink:   #ff2d78;
+  --accent-green:  #00ff9d;
+  --border-subtle: rgba(0, 255, 247, 0.1);
+  --border-hover:  rgba(0, 255, 247, 0.4);
+  --grid-line:     rgba(0, 255, 247, 0.03);
+  --glow-cyan:     rgba(0, 255, 247, 0.15);
+}
+
+/* --- LIGHT MODE: "paper terminal" --- */
+.light {
+  --bg-primary:    #f0f4f8;
+  --bg-card:       rgba(255, 255, 255, 0.9);
+  --text-primary:  #1a1f2e;
+  --text-secondary:#4a5568;
+  --text-muted:    rgba(74, 85, 104, 0.5);
+  --accent-cyan:   #0097a7;
+  --accent-purple: #5b21b6;
+  --accent-pink:   #be185d;
+  --accent-green:  #047857;
+  --border-subtle: rgba(0, 151, 167, 0.15);
+  --border-hover:  rgba(0, 151, 167, 0.5);
+  --grid-line:     rgba(0, 151, 167, 0.06);
+  --glow-cyan:     rgba(0, 151, 167, 0.08);
+}
+
+/* Smooth theme transition */
+*, *::before, *::after {
+  transition: background-color 0.3s ease, border-color 0.3s ease,
+              color 0.2s ease, box-shadow 0.3s ease;
+}
+/* Không transition canvas/framer để tránh lag */
+canvas, [style*="transform"] { transition: none !important; }
+
+/* ============================================
+   SMOOTH SCROLL
+   ============================================ */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Glitch text effect cho nav items */
+.glitch-text {
+  position: relative;
+  animation: glitch 0.15s steps(1) forwards;
+}
+
+@keyframes glitch {
+  0%   { text-shadow: none; transform: none; }
+  20%  { text-shadow: -2px 0 #ff2d78, 2px 0 #00fff7; transform: skewX(-5deg); }
+  40%  { text-shadow: 2px 0 #7b61ff, -2px 0 #00ff9d; transform: skewX(3deg); }
+  60%  { text-shadow: -1px 0 #ff2d78; transform: skewX(-2deg); }
+  80%  { text-shadow: none; transform: skewX(1deg); }
+  100% { text-shadow: none; transform: none; }
+}
+
+/* Scan line animation cho cyberpunk bg */
+@keyframes scanline {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.scanline-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 50%,
+    rgba(0, 255, 247, 0.015) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Neon flicker */
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    opacity: 1;
+  }
+  20%, 24%, 55% {
+    opacity: 0.4;
+  }
+}
+
+.neon-flicker {
+  animation: neon-flicker 5s infinite;
+}
+
+/* Smooth scroll transitions cho sections */
+section {
+  transition: opacity 0.3s ease;
+}
+
+/* Cursor ẩn - chỉ khi class custom-cursor được add vào <html> */
+@media (pointer: fine) {
+  .custom-cursor,
+  .custom-cursor * {
+    cursor: none !important;
+  }
+}
+
+/* Scrollbar cyberpunk style */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050a0e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 247, 0.3);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 247, 0.6);
+}
+
+/* Selection style */
+::selection {
+  background: rgba(0, 255, 247, 0.2);
+  color: #00fff7;
+}
+
+/* Fade in khi scroll vào view */
+.scroll-fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.scroll-fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Terminal cursor blink */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.terminal-cursor {
+  animation: blink 1s step-start infinite;
+}
+
+/* Animate slide in from left/right (giữ lại từ file cũ) */
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.8s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.8s ease-out forwards;
+}

@@ -262,7 +262,7 @@ const HeroSection = () => {
                   <ArrowDownRight size={12} />
                 </button>
                 <a
-                  href="/cv/Resume_DinhGiaAn.pdf"
+                  href="/cv/DinhGiaAn_Frontend_CV.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{

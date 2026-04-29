@@ -8,7 +8,7 @@ const PROJECTS = [
     num: "01",
     title: "NovelNest",
     subtitle: "Online Book Reading Platform",
-    desc: "A full-stack EPUB reader with JWT auth, role-based access, PayOS payment gateway, and 95+ Lighthouse score in production.",
+    desc: "A full-stack EPUB reader with JWT auth, role-based access, PayOS payment gateway, and 90+ Lighthouse score in production.",
     image: "/assets/novelnest-homepage.webp",
     tech: [
       "Next.js",

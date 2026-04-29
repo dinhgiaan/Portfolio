@@ -68,7 +68,12 @@ const imageConfigs = {
             { width: 435, suffix: '435w' },
             { width: 870, suffix: '870w' },
             { width: 1305, suffix: '1305w' }
-      ]
+      ],
+      'redux.webp': [
+            { width: 20, suffix: '20w' },
+            { width: 40, suffix: '40w' },
+            { width: 60, suffix: '60w' }
+      ],
 };
 
 async function generateImages() {
@@ -102,8 +107,7 @@ async function generateImages() {
                         console.error(`Lỗi: ${error.message}`);
                   }
             }
-            console.log('');
       }
 }
 
-generateImages().catch(console.error);
+generateImages();

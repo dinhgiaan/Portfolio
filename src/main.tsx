@@ -7,8 +7,8 @@ import "@/styles/cyberpunk.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme="dark" storageKey="portfolio-theme">
       <App />
     </ThemeProvider>
-  </StrictMode>
+  </StrictMode>,
 );

@@ -1,286 +1,347 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
-// import ModeToggle from "../theme/mode.toggle";
-import { Menu, X, Terminal } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useTheme } from "@/components/theme/theme.provider";
+import { Sun, Moon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
-const NAVIGATION_ITEMS = [
-  { name: "whoami", sectionId: "hero-section" },
-  { name: "skills", sectionId: "skills-section" },
-  { name: "projects", sectionId: "projects-section" },
-  { name: "contact", sectionId: "contact-section" },
+const getIsDark = (theme: string) =>
+  theme === "dark" ||
+  (theme === "system" &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+const NAV = [
+  { name: "About", id: "hero-section" },
+  { name: "Skills", id: "skills-section" },
+  { name: "Work", id: "projects-section" },
+  { name: "Contact", id: "contact-section" },
 ];
 
-const Header = () => {
-  const [activeIndex, setActiveIndex] = useState<number>(0);
-  const [indicatorStyle, setIndicatorStyle] = useState({ width: 0, left: 0 });
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
-  const [isScrolling, setIsScrolling] = useState<boolean>(false);
-  const [glitchIndex, setGlitchIndex] = useState<number | null>(null);
+/* Chữ chạy từng ký tự khi hover nav item */
+const ScrambleText = ({ text, active }: { text: string; active: boolean }) => {
+  const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const [displayed, setDisplayed] = useState(text);
+  const rafRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Glitch effect ngẫu nhiên trên nav items
   useEffect(() => {
-    const interval = setInterval(() => {
-      const idx = Math.floor(Math.random() * NAVIGATION_ITEMS.length);
-      setGlitchIndex(idx);
-      setTimeout(() => setGlitchIndex(null), 150);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const updateIndicator = useCallback(() => {
-    const activeItem = itemRefs.current[activeIndex];
-    const container = containerRef.current;
-    if (activeItem && container) {
-      const containerRect = container.getBoundingClientRect();
-      const itemRect = activeItem.getBoundingClientRect();
-      setIndicatorStyle({
-        left: itemRect.left - containerRect.left,
-        width: itemRect.width,
-      });
+    if (!active) {
+      setDisplayed(text);
+      return;
     }
-  }, [activeIndex]);
+    let iter = 0;
+    const total = text.length;
+    const run = () => {
+      setDisplayed(
+        text
+          .split("")
+          .map((c, i) => (i < iter ? c : CHARS[Math.floor(Math.random() * 26)]))
+          .join(""),
+      );
+      iter += 0.5;
+      if (iter < total + 1) rafRef.current = setTimeout(run, 35);
+    };
+    run();
+    return () => {
+      if (rafRef.current) clearTimeout(rafRef.current);
+    };
+  }, [active, text]);
 
-  const scrollToSection = useCallback((sectionId: string, index: number) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      setIsScrolling(true);
-      setActiveIndex(index);
-      const headerHeight = 80;
-      const elementPosition =
-        element.getBoundingClientRect().top + window.pageYOffset;
-      const offsetPosition = elementPosition - headerHeight;
-      window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-      scrollTimeoutRef.current = setTimeout(() => setIsScrolling(false), 1000);
-    }
-  }, []);
+  return (
+    <span style={{ fontVariantNumeric: "tabular-nums" }}>{displayed}</span>
+  );
+};
 
-  const getActiveIndexFromScroll = useCallback(() => {
-    if (isScrolling) return;
-    const headerHeight = 100;
-    for (let i = NAVIGATION_ITEMS.length - 1; i >= 0; i--) {
-      const section = document.getElementById(NAVIGATION_ITEMS[i].sectionId);
-      if (section) {
-        const rect = section.getBoundingClientRect();
-        if (rect.top <= headerHeight) {
-          setActiveIndex(i);
+const Header = () => {
+  const { theme, setTheme } = useTheme();
+  const isDark = getIsDark(theme);
+  const toggle = () => setTheme(isDark ? "light" : "dark");
+
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const scrollingRef = useRef(false);
+
+  /* Lock body scroll khi menu mobile mở */
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
+  useEffect(() => {
+    const onScroll = () => {
+      setScrolled(window.scrollY > 40);
+      if (scrollingRef.current) return;
+      for (let i = NAV.length - 1; i >= 0; i--) {
+        const el = document.getElementById(NAV[i].id);
+        if (el && el.getBoundingClientRect().top <= 120) {
+          setActiveIdx(i);
           return;
         }
       }
-    }
-  }, [isScrolling]);
-
-  const handleItemClick = useCallback(
-    (index: number) => {
-      setIsMobileMenuOpen(false);
-      scrollToSection(NAVIGATION_ITEMS[index].sectionId, index);
-    },
-    [scrollToSection]
-  );
-
-  useEffect(() => {
-    const timer = setTimeout(updateIndicator, 0);
-    return () => clearTimeout(timer);
-  }, [updateIndicator]);
-
-  useEffect(() => {
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          getActiveIndexFromScroll();
-          ticking = false;
-        });
-        ticking = true;
-      }
     };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [getActiveIndexFromScroll]);
-
-  useEffect(() => {
-    let resizeTimeout: NodeJS.Timeout;
-    const handleResize = () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        if (window.innerWidth >= 768) setIsMobileMenuOpen(false);
-        updateIndicator();
-      }, 150);
-    };
-    window.addEventListener("resize", handleResize, { passive: true });
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      clearTimeout(resizeTimeout);
-    };
-  }, [updateIndicator]);
-
-  useEffect(() => {
-    return () => {
-      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const navigationItems = useMemo(
-    () =>
-      NAVIGATION_ITEMS.map((item, index) => (
-        <div
-          key={index}
-          ref={(el) => {
-            itemRefs.current[index] = el;
-          }}
-          onClick={() => handleItemClick(index)}
-          className={`
-                  relative py-2 px-1 cursor-pointer font-mono text-sm tracking-widest uppercase
-                  transition-all duration-200 select-none whitespace-nowrap
-                  ${glitchIndex === index ? "glitch-text" : ""}
-                  ${
-                    activeIndex === index
-                      ? "text-[#00fff7]"
-                      : "text-[#8892a4] hover:text-[#00fff7]"
-                  }
-                `}>
-          {activeIndex === index && (
-            <span className="absolute -left-3 top-1/2 -translate-y-1/2 text-[#00fff7] text-xs opacity-70">
-              ▸
-            </span>
-          )}
-          {item.name}
-        </div>
-      )),
-    [activeIndex, handleItemClick, glitchIndex]
-  );
+  const scrollTo = useCallback((id: string, idx: number) => {
+    setMenuOpen(false);
+    setActiveIdx(idx);
+    scrollingRef.current = true;
+    document
+      .getElementById(id)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setTimeout(() => {
+      scrollingRef.current = false;
+    }, 1100);
+  }, []);
 
   return (
     <>
-      {/* Cyberpunk header */}
-      <header className="sticky top-0 z-50">
-        {/* Top accent line */}
-        <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-[#00fff7] to-transparent opacity-40" />
+      {/* ── Header bar ─────────────────────────────────── */}
+      <header
+        className={[
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+          scrolled
+            ? "border-b border-[var(--border)]"
+            : "border-b border-transparent",
+        ].join(" ")}
+        style={{
+          backdropFilter: scrolled ? "blur(24px) saturate(180%)" : "none",
+          backgroundColor: scrolled
+            ? isDark
+              ? "rgba(12,11,9,0.88)"
+              : "rgba(247,243,236,0.88)"
+            : "transparent",
+        }}>
+        <div className="max-w-[1200px] mx-auto px-8">
+          <div className="flex items-center justify-between h-[68px]">
+            {/* Logo */}
+            <button
+              onClick={() => scrollTo("hero-section", 0)}
+              className="bg-transparent border-none cursor-pointer p-0 group">
+              <span
+                className="font-display italic text-xl tracking-tight"
+                style={{
+                  color: "var(--text-primary)",
+                  letterSpacing: "-0.01em",
+                }}>
+                Gia An
+                <motion.span
+                  style={{ color: "var(--accent)" }}
+                  animate={{ opacity: [1, 0.3, 1] }}
+                  transition={{
+                    duration: 2.4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}>
+                  .
+                </motion.span>
+              </span>
+            </button>
 
-        <div
-          className="backdrop-blur-md border-b border-[#00fff7]/10"
-          style={{ background: "rgba(5, 10, 14, 0.85)" }}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Desktop */}
-            <div className="hidden md:flex justify-between items-center h-16">
-              {/* Logo */}
-              <div className="flex items-center gap-2 flex-1">
-                <Terminal className="w-4 h-4 text-[#00fff7]" />
-                <span className="font-mono text-sm text-[#00fff7] tracking-widest">
-                  dinhgiaan<span className="animate-pulse">_</span>
-                </span>
-              </div>
-
-              {/* Nav */}
-              <nav className="flex-1 flex justify-center">
-                <div
-                  ref={containerRef}
-                  className="relative inline-flex space-x-8 lg:space-x-12 items-center">
-                  {navigationItems}
-                  {/* Neon underline indicator */}
-                  <div
-                    className="absolute bottom-0 h-[1px] transition-all duration-300 ease-out"
-                    style={{
-                      left: `${indicatorStyle.left}px`,
-                      width: `${indicatorStyle.width}px`,
-                      background: "#00fff7",
-                      boxShadow:
-                        "0 0 8px #00fff7, 0 0 16px rgba(0,255,247,0.5)",
-                    }}
-                  />
-                </div>
-              </nav>
-
-              {/* Actions */}
-              <div className="flex-1 flex justify-end items-center space-x-3">
+            {/* ── Desktop Nav ── */}
+            <nav className="desktop-only items-center gap-10">
+              {NAV.map((item, i) => (
                 <button
-                  className="hidden lg:inline-flex px-5 py-2 font-mono text-xs tracking-widest text-[#00fff7] border border-[#00fff7]/50 rounded-sm
-                                   hover:bg-[#00fff7]/10 hover:border-[#00fff7] transition-all duration-200
-                                   relative overflow-hidden group cursor-pointer"
-                  onClick={() =>
-                    window.open(
-                      "https://mail.google.com/mail/?view=cm&fs=1&to=dinhgiaanforwork@gmail.com",
-                      "_blank"
-                    )
-                  }>
-                  <span className="relative z-10">HIRE ME</span>
-                  <span className="absolute inset-0 bg-[#00fff7] opacity-0 group-hover:opacity-5 transition-opacity" />
+                  key={item.id}
+                  className={`nav-link ${activeIdx === i ? "active" : ""}`}
+                  onClick={() => scrollTo(item.id, i)}
+                  onMouseEnter={() => setHoveredIdx(i)}
+                  onMouseLeave={() => setHoveredIdx(null)}>
+                  <ScrambleText text={item.name} active={hoveredIdx === i} />
                 </button>
-                {/* <ModeToggle /> */}
-              </div>
-            </div>
+              ))}
+            </nav>
 
-            {/* Mobile */}
-            <div className="md:hidden flex justify-between items-center h-16">
-              <div className="flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-[#00fff7]" />
-                <span className="font-mono text-xs text-[#00fff7] tracking-widest">
-                  dinhgiaan_
-                </span>
-              </div>
-              <div className="flex items-center space-x-2">
-                {/* <ModeToggle /> */}
-                <button
-                  onClick={() => setIsMobileMenuOpen((p) => !p)}
-                  className="p-2 text-[#8892a4] hover:text-[#00fff7] transition-colors border border-[#00fff7]/20 rounded-sm">
-                  {isMobileMenuOpen ? (
-                    <X className="h-4 w-4" />
-                  ) : (
-                    <Menu className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
+            {/* ── Right actions ── */}
+            <div className="flex items-center gap-3">
+              {/* Index counter — mốc thẩm mỹ kiểu editorial */}
+              <span
+                className="desktop-only font-mono-light"
+                style={{
+                  fontSize: "0.62rem",
+                  color: "var(--text-muted)",
+                  letterSpacing: "0.15em",
+                }}>
+                {String(activeIdx + 1).padStart(2, "0")}/
+                {String(NAV.length).padStart(2, "0")}
+              </span>
+
+              {/* Divider dọc */}
+              <span
+                className="desktop-only"
+                style={{
+                  width: "1px",
+                  height: "18px",
+                  background: "var(--border-strong)",
+                }}
+              />
+
+              {/* Theme toggle */}
+              <button
+                onClick={toggle}
+                aria-label="Toggle theme"
+                className="theme-btn">
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.span
+                    key={isDark ? "sun" : "moon"}
+                    initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
+                    animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                    exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    style={{ display: "flex" }}>
+                    {isDark ? <Sun size={14} /> : <Moon size={14} />}
+                  </motion.span>
+                </AnimatePresence>
+              </button>
+
+              {/* CTA — desktop only */}
+              <button
+                className="btn-luxury desktop-only"
+                onClick={() =>
+                  window.open("mailto:dinhgiaanforwork@gmail.com")
+                }>
+                <span>Hire me</span>
+              </button>
+
+              {/* Hamburger — mobile only */}
+              <button
+                className={`hamburger mobile-only ${menuOpen ? "open" : ""}`}
+                onClick={() => setMenuOpen((p) => !p)}
+                aria-label="Menu">
+                <span />
+                <span />
+                <span />
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Mobile menu */}
-        <div
-          className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${
-            isMobileMenuOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
-          }`}
-          style={{
-            background: "rgba(5, 10, 14, 0.95)",
-            borderBottom: "1px solid rgba(0,255,247,0.1)",
-          }}>
-          <nav className="px-4 py-4">
-            <div className="space-y-1">
-              {NAVIGATION_ITEMS.map((item, index) => (
-                <div
-                  key={index}
-                  onClick={() => handleItemClick(index)}
-                  className={`
-                              flex items-center gap-3 py-3 px-3 font-mono text-sm tracking-widest uppercase cursor-pointer
-                              border-l-2 transition-all duration-200 select-none
-                              ${
-                                activeIndex === index
-                                  ? "border-[#00fff7] text-[#00fff7] bg-[#00fff7]/5"
-                                  : "border-transparent text-[#8892a4] hover:text-[#00fff7] hover:border-[#00fff7]/40"
-                              }
-                            `}>
-                  <span className="text-xs text-[#00fff7]/40">
-                    0{index + 1}
-                  </span>
-                  {item.name}
-                </div>
-              ))}
-            </div>
-          </nav>
-        </div>
+        {/* Progress bar cuộn trang — 1px accent */}
+        <ScrollProgress />
       </header>
 
-      {/* Mobile backdrop */}
-      {isMobileMenuOpen && (
-        <div
-          className="fixed inset-0 z-40 md:hidden"
-          style={{ background: "rgba(0,0,0,0.5)" }}
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      )}
+      {/* ── Mobile Full-screen Menu ──────────────────────── */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            className="mobile-menu open"
+            initial={{ clipPath: "inset(0 0 100% 0)" }}
+            animate={{ clipPath: "inset(0 0 0% 0)" }}
+            exit={{ clipPath: "inset(0 0 100% 0)" }}
+            transition={{ duration: 0.55, ease: [0.76, 0, 0.24, 1] }}
+            style={{ zIndex: 48 }}>
+            {/* Decorative index */}
+            <span
+              className="font-mono-light absolute top-8 right-8"
+              style={{
+                fontSize: "0.6rem",
+                color: "var(--text-muted)",
+                letterSpacing: "0.2em",
+              }}>
+              MENU
+            </span>
+
+            <nav style={{ paddingTop: "2rem" }}>
+              {NAV.map((item, i) => (
+                <motion.button
+                  key={item.id}
+                  className={`mobile-nav-item w-full ${activeIdx === i ? "active" : ""}`}
+                  onClick={() => scrollTo(item.id, i)}
+                  initial={{ y: 60, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{
+                    duration: 0.45,
+                    delay: i * 0.07,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}>
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "baseline",
+                      gap: "1.5rem",
+                    }}>
+                    <span
+                      className="font-mono-light"
+                      style={{
+                        fontSize: "0.65rem",
+                        color: "var(--accent)",
+                        letterSpacing: "0.15em",
+                      }}>
+                      0{i + 1}
+                    </span>
+                    <span
+                      className="font-display"
+                      style={{
+                        fontSize: "clamp(2.2rem, 8vw, 3.5rem)",
+                        fontStyle: activeIdx === i ? "italic" : "normal",
+                      }}>
+                      {item.name}
+                    </span>
+                  </span>
+                </motion.button>
+              ))}
+            </nav>
+
+            {/* Bottom info */}
+            <motion.div
+              className="absolute bottom-10 left-8 right-8 flex justify-between items-end"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}>
+              <span
+                className="font-mono-light"
+                style={{
+                  fontSize: "0.62rem",
+                  color: "var(--text-muted)",
+                  letterSpacing: "0.15em",
+                }}>
+                dinhgiaanforwork@gmail.com
+              </span>
+              <span
+                className="font-display italic"
+                style={{ fontSize: "0.9rem", color: "var(--accent)" }}>
+                HCMC, VN
+              </span>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
+  );
+};
+
+/* Thanh tiến trình cuộn nhỏ, màu accent */
+const ScrollProgress = () => {
+  const [pct, setPct] = useState(0);
+  useEffect(() => {
+    const fn = () => {
+      const el = document.documentElement;
+      setPct((el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100);
+    };
+    window.addEventListener("scroll", fn, { passive: true });
+    return () => window.removeEventListener("scroll", fn);
+  }, []);
+  return (
+    <div
+      style={{
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: "1px",
+        background: "var(--border)",
+      }}>
+      <motion.div
+        style={{
+          height: "100%",
+          background: "var(--accent)",
+          width: `${pct}%`,
+        }}
+        transition={{ duration: 0.1 }}
+      />
+    </div>
   );
 };
 

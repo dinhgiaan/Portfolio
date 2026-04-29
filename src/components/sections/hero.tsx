@@ -1,291 +1,541 @@
-import { Menubar, MenubarMenu, MenubarTrigger } from "@/components/ui/menubar";
-import { CardContainer, CardItem } from "@/components/ui/3d-card";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+import { ArrowDownRight, Github, Linkedin, Mail, FileText } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import ScrollInView from "../scroll.inview";
-import { motion } from "framer-motion";
-import { useEffect, useState, useRef } from "react";
 
-const useTypewriter = (texts: string[], speed = 80, pause = 2000) => {
+/* ── Typewriter chữ vai trò ── */
+const useTypewriter = (texts: string[], speed = 70, pause = 2400) => {
   const [displayed, setDisplayed] = useState("");
-  const [textIdx, setTextIdx] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [isWaiting, setIsWaiting] = useState(false);
-
+  const [idx, setIdx] = useState(0);
+  const [del, setDel] = useState(false);
+  const [wait, setWait] = useState(false);
   useEffect(() => {
-    if (isWaiting) return;
-
-    const current = texts[textIdx];
-    const timeout = setTimeout(
+    if (wait) return;
+    const cur = texts[idx];
+    const t = setTimeout(
       () => {
-        if (!isDeleting) {
-          setDisplayed(current.slice(0, displayed.length + 1));
-          if (displayed.length + 1 === current.length) {
-            setIsWaiting(true);
+        if (!del) {
+          setDisplayed(cur.slice(0, displayed.length + 1));
+          if (displayed.length + 1 === cur.length) {
+            setWait(true);
             setTimeout(() => {
-              setIsWaiting(false);
-              setIsDeleting(true);
+              setWait(false);
+              setDel(true);
             }, pause);
           }
         } else {
-          setDisplayed(current.slice(0, displayed.length - 1));
+          setDisplayed(cur.slice(0, displayed.length - 1));
           if (displayed.length === 0) {
-            setIsDeleting(false);
-            setTextIdx((i) => (i + 1) % texts.length);
+            setDel(false);
+            setIdx((i) => (i + 1) % texts.length);
           }
         }
       },
-      isDeleting ? speed / 2 : speed
+      del ? speed / 2 : speed,
     );
-
-    return () => clearTimeout(timeout);
-  }, [displayed, isDeleting, isWaiting, textIdx, texts, speed, pause]);
-
+    return () => clearTimeout(t);
+  }, [displayed, del, wait, idx, texts, speed, pause]);
   return displayed;
 };
 
+/* ── Số đếm ── */
 const CountUp = ({ end, suffix = "" }: { end: number; suffix?: string }) => {
-  const [count, setCount] = useState(0);
+  const [n, setN] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
-
   useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (!entry.isIntersecting) return;
-      let start = 0;
-      const step = Math.ceil(end / 40);
-      const timer = setInterval(() => {
-        start += step;
-        if (start >= end) {
-          setCount(end);
-          clearInterval(timer);
-        } else setCount(start);
-      }, 40);
-      observer.disconnect();
+    const ob = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      let i = 0;
+      const step = Math.ceil(end / 50);
+      const t = setInterval(() => {
+        i += step;
+        if (i >= end) {
+          setN(end);
+          clearInterval(t);
+        } else setN(i);
+      }, 35);
+      ob.disconnect();
     });
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
+    if (ref.current) ob.observe(ref.current);
+    return () => ob.disconnect();
   }, [end]);
-
   return (
     <span ref={ref}>
-      {count}
+      {n}
       {suffix}
     </span>
   );
 };
 
 const HeroSection = () => {
-  const role = useTypewriter(
-    [
-      "Frontend Developer",
-      "React.js / Next.js Dev",
-      "UI/UX Enthusiast",
-      "Team Lead @ CodeGuru",
-    ],
-    75,
-    2200
-  );
+  const role = useTypewriter([
+    "Frontend Developer",
+    "Next.js Specialist",
+    "UI/UX Enthusiast",
+    "Team Lead",
+  ]);
+
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const rx = useSpring(mx, { stiffness: 80, damping: 20 });
+  const ry = useSpring(my, { stiffness: 80, damping: 20 });
+
+  const onMove = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const cx = (e.clientX - rect.left - rect.width / 2) / rect.width;
+    const cy = (e.clientY - rect.top - rect.height / 2) / rect.height;
+    mx.set(cy * 6);
+    my.set(-cx * 6);
+  };
+  const onLeave = () => {
+    mx.set(0);
+    my.set(0);
+  };
 
   const stats = [
-    { value: 2, suffix: " mo", label: "Experience" },
-    { value: 2, suffix: "+", label: "Projects" },
-    { value: 15, suffix: "+", label: "APIs Built" },
+    { value: 5, suffix: "+ mo", label: "Experience" },
+    { value: 3, suffix: "+", label: "Client Projects" },
+    { value: 90, suffix: "+", label: "Lighthouse Score" },
   ];
 
   return (
-    <ScrollInView>
-      <section className="min-w-full">
-        <motion.div
-          className="flex items-center gap-3 mb-8"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}>
-          <span className="text-[#00fff7] font-mono text-sm tracking-widest">
-            01.
-          </span>
-          <span className="text-[#8892a4] font-mono text-sm tracking-widest uppercase">
-            About Me
-          </span>
-          <div className="flex-1 h-[1px] bg-gradient-to-r from-[#00fff7]/30 to-transparent" />
-        </motion.div>
+    <section
+      id="hero-section"
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        paddingTop: "68px",
+      }}>
+      <div
+        style={{
+          maxWidth: "1200px",
+          margin: "0 auto",
+          padding: "4rem 2rem",
+          width: "100%",
+        }}>
+        <ScrollInView direction="up" delay={0}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.75rem",
+              marginBottom: "2.5rem",
+            }}>
+            <span className="section-label">01 — Introduction</span>
+            <span className="gold-line" style={{ flex: 1 }} />
+          </div>
+        </ScrollInView>
 
-        <div className="flex flex-col lg:flex-row justify-center items-start gap-12 px-4">
-          {/* Avatar card */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
-            className="w-full lg:w-auto flex justify-center flex-shrink-0">
-            <CardContainer className="inter-var">
-              <CardItem translateZ="120" className="w-full max-w-[240px]">
-                <div className="relative group">
-                  {/* Neon border glow */}
-                  <div
-                    className="absolute -inset-[1px] rounded-md opacity-60 group-hover:opacity-100 transition-opacity duration-500"
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr",
+            gap: "4rem",
+            alignItems: "center",
+          }}>
+          {/* ── Tên lớn ── */}
+          <div>
+            <ScrollInView direction="up" delay={0.05}>
+              <p
+                className="font-mono-light"
+                style={{
+                  fontSize: "0.75rem",
+                  letterSpacing: "0.2em",
+                  color: "var(--text-muted)",
+                  marginBottom: "0.75rem",
+                }}>
+                Hello, I'm
+              </p>
+            </ScrollInView>
+
+            <ScrollInView direction="up" delay={0.12}>
+              <h1
+                className="font-display"
+                style={{
+                  fontSize: "clamp(3rem, 8vw, 6.5rem)",
+                  lineHeight: 1.0,
+                  color: "var(--text-primary)",
+                  marginBottom: "0.25rem",
+                  fontWeight: 600,
+                }}>
+                Dinh
+              </h1>
+            </ScrollInView>
+
+            <ScrollInView direction="up" delay={0.18}>
+              <h1
+                className="font-display"
+                style={{
+                  fontSize: "clamp(3rem, 8vw, 6.5rem)",
+                  lineHeight: 1.0,
+                  color: "transparent",
+                  WebkitTextStroke: "1px var(--text-primary)",
+                  marginBottom: "1.5rem",
+                  fontStyle: "italic",
+                }}>
+                Gia An
+              </h1>
+            </ScrollInView>
+
+            {/* Role typewriter */}
+            <ScrollInView direction="up" delay={0.24}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.75rem",
+                  marginBottom: "1.75rem",
+                }}>
+                <span
+                  style={{
+                    width: "24px",
+                    height: "1px",
+                    background: "var(--accent)",
+                  }}
+                />
+                <span
+                  className="font-mono-light"
+                  style={{
+                    fontSize: "0.9rem",
+                    color: "var(--accent)",
+                    letterSpacing: "0.05em",
+                  }}>
+                  {role}
+                </span>
+                <span
+                  style={{
+                    width: "2px",
+                    height: "1rem",
+                    background: "var(--accent)",
+                    display: "inline-block",
+                    animation: "pulse 1s infinite",
+                  }}
+                />
+              </div>
+            </ScrollInView>
+
+            {/* Bio */}
+            <ScrollInView direction="up" delay={0.3}>
+              <p
+                style={{
+                  fontSize: "1rem",
+                  lineHeight: 1.8,
+                  color: "var(--text-secondary)",
+                  maxWidth: "540px",
+                  marginBottom: "2.5rem",
+                }}>
+                Frontend developer with 5+ months of professional experience,
+                specializing in{" "}
+                <em
+                  style={{ color: "var(--text-primary)", fontStyle: "normal" }}>
+                  Next.js
+                </em>
+                ,{" "}
+                <em
+                  style={{ color: "var(--text-primary)", fontStyle: "normal" }}>
+                  TypeScript
+                </em>
+                , and scalable UI architecture. Delivered 3 client projects on
+                schedule with 90+ Lighthouse scores.
+              </p>
+            </ScrollInView>
+
+            {/* CTAs */}
+            <ScrollInView direction="up" delay={0.36}>
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignItems: "center",
+                  gap: "1rem",
+                  marginBottom: "3rem",
+                }}>
+                <button
+                  className="btn-luxury"
+                  onClick={() =>
+                    document
+                      .getElementById("contact-section")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }>
+                  <span>Get in touch</span>
+                  <ArrowDownRight size={12} />
+                </button>
+                <a
+                  href="/cv/Resume_DinhGiaAn.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.4rem",
+                    fontSize: "0.7rem",
+                    fontWeight: 500,
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                    color: "var(--text-secondary)",
+                    textDecoration: "none",
+                    transition: "color 0.2s",
+                    paddingBottom: "2px",
+                    borderBottom: "1px solid var(--border-strong)",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.color = "var(--accent)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.color = "var(--text-secondary)")
+                  }>
+                  <FileText size={12} />
+                  View Resume
+                </a>
+              </div>
+            </ScrollInView>
+
+            {/* Socials */}
+            <ScrollInView direction="up" delay={0.42}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1.25rem",
+                }}>
+                {[
+                  {
+                    icon: Github,
+                    href: "https://github.com/dinhgiaan",
+                    label: "GitHub",
+                  },
+                  {
+                    icon: Linkedin,
+                    href: "https://linkedin.com/in/dinhgiaan",
+                    label: "LinkedIn",
+                  },
+                  {
+                    icon: Mail,
+                    href: "mailto:dinhgiaanforwork@gmail.com",
+                    label: "Email",
+                  },
+                ].map(({ icon: Icon, href, label }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={label}
                     style={{
-                      background:
-                        "linear-gradient(135deg, #00fff7, #7b61ff, #ff2d78)",
+                      width: "38px",
+                      height: "38px",
+                      border: "1px solid var(--border)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "var(--text-muted)",
+                      textDecoration: "none",
+                      transition: "all 0.25s ease",
                     }}
-                  />
-                  <div className="relative overflow-hidden rounded-md bg-[#050a0e] p-[1px]">
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = "var(--accent)";
+                      e.currentTarget.style.color = "var(--accent)";
+                      e.currentTarget.style.transform = "translateY(-2px)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = "var(--border)";
+                      e.currentTarget.style.color = "var(--text-muted)";
+                      e.currentTarget.style.transform = "none";
+                    }}>
+                    <Icon size={15} />
+                  </a>
+                ))}
+                <span
+                  style={{
+                    flex: 1,
+                    height: "1px",
+                    background: "var(--border)",
+                  }}
+                />
+              </div>
+            </ScrollInView>
+          </div>
+
+          {/* ── Right col: ảnh + stats ── */}
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+            {/* Avatar với parallax */}
+            <ScrollInView direction="up" delay={0.15}>
+              <motion.div
+                onMouseMove={onMove}
+                onMouseLeave={onLeave}
+                style={{
+                  rotateX: rx,
+                  rotateY: ry,
+                  perspective: 800,
+                  display: "inline-block",
+                  width: "100%",
+                  maxWidth: "320px",
+                  margin: "0 auto",
+                }}>
+                <div style={{ position: "relative" }}>
+                  {/* Gold frame corner decorations */}
+                  {[
+                    {
+                      top: "-6px",
+                      left: "-6px",
+                      borderTop: "2px solid var(--accent)",
+                      borderLeft: "2px solid var(--accent)",
+                      width: "28px",
+                      height: "28px",
+                    },
+                    {
+                      top: "-6px",
+                      right: "-6px",
+                      borderTop: "2px solid var(--accent)",
+                      borderRight: "2px solid var(--accent)",
+                      width: "28px",
+                      height: "28px",
+                    },
+                    {
+                      bottom: "-6px",
+                      left: "-6px",
+                      borderBottom: "2px solid var(--accent)",
+                      borderLeft: "2px solid var(--accent)",
+                      width: "28px",
+                      height: "28px",
+                    },
+                    {
+                      bottom: "-6px",
+                      right: "-6px",
+                      borderBottom: "2px solid var(--accent)",
+                      borderRight: "2px solid var(--accent)",
+                      width: "28px",
+                      height: "28px",
+                    },
+                  ].map((s, i) => (
+                    <span key={i} style={{ position: "absolute", ...s }} />
+                  ))}
+
+                  <div
+                    style={{
+                      overflow: "hidden",
+                      aspectRatio: "3/4",
+                      background: "var(--bg-secondary)",
+                    }}>
                     <img
-                      className="h-80 w-full object-cover rounded-md transition-all duration-500 group-hover:scale-105"
-                      alt="Dinh Gia An"
-                      width="240"
-                      height="320"
-                      loading="lazy"
                       src="/assets/profile-picture.jpg"
-                    />
-                    {/* Scanline overlay */}
-                    <div
-                      className="absolute inset-0 pointer-events-none opacity-20"
+                      alt="Dinh Gia An"
+                      loading="lazy"
                       style={{
-                        backgroundImage:
-                          "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 4px)",
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        filter: "grayscale(15%)",
+                        transition: "filter 0.4s ease, transform 0.6s ease",
+                        pointerEvents: "none",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.filter = "grayscale(0%)";
+                        e.currentTarget.style.transform = "scale(1.03)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.filter = "grayscale(15%)";
+                        e.currentTarget.style.transform = "scale(1)";
                       }}
                     />
-                    {/* Corner decorations */}
-                    <div className="absolute top-2 left-2 w-4 h-4 border-t border-l border-[#00fff7] opacity-80" />
-                    <div className="absolute top-2 right-2 w-4 h-4 border-t border-r border-[#00fff7] opacity-80" />
-                    <div className="absolute bottom-2 left-2 w-4 h-4 border-b border-l border-[#00fff7] opacity-80" />
-                    <div className="absolute bottom-2 right-2 w-4 h-4 border-b border-r border-[#00fff7] opacity-80" />
+                  </div>
+
+                  {/* Availability badge */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: "1rem",
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      background: "var(--bg-card)",
+                      border: "1px solid var(--accent-subtle)",
+                      padding: "0.4rem 1rem",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      whiteSpace: "nowrap",
+                    }}>
+                    <span
+                      style={{
+                        width: "6px",
+                        height: "6px",
+                        borderRadius: "50%",
+                        background: "#22c55e",
+                        animation: "pulse 2s infinite",
+                      }}
+                    />
+                    <span
+                      className="font-mono-light"
+                      style={{
+                        fontSize: "0.65rem",
+                        letterSpacing: "0.12em",
+                        color: "var(--text-secondary)",
+                      }}>
+                      Available for work
+                    </span>
                   </div>
                 </div>
+              </motion.div>
+            </ScrollInView>
 
-                {/* Stats dưới ảnh */}
-                <div className="flex justify-between mt-4 px-1">
-                  {stats.map((s, i) => (
-                    <div key={i} className="text-center">
-                      <div className="font-mono text-lg font-bold text-[#00fff7]">
-                        <CountUp end={s.value} suffix={s.suffix} />
-                      </div>
-                      <div className="font-mono text-[10px] text-[#8892a4] tracking-wider">
-                        {s.label}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardItem>
-            </CardContainer>
-          </motion.div>
-
-          {/* Info panel */}
-          <motion.div
-            className="w-full lg:w-3/5 space-y-5"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}>
-            {/* Terminal card */}
-            <div
-              className="rounded-sm border border-[#00fff7]/20 overflow-hidden"
-              style={{ background: "rgba(5, 10, 14, 0.8)" }}>
-              {/* Terminal title bar */}
+            {/* Stats */}
+            <ScrollInView direction="up" delay={0.3}>
               <div
-                className="flex items-center gap-2 px-4 py-2 border-b border-[#00fff7]/10"
-                style={{ background: "rgba(0,255,247,0.03)" }}>
-                <div className="w-2.5 h-2.5 rounded-full bg-[#ff2d78]" />
-                <div className="w-2.5 h-2.5 rounded-full bg-[#ffb800]" />
-                <div className="w-2.5 h-2.5 rounded-full bg-[#00ff9d]" />
-                <span className="ml-2 font-mono text-xs text-[#8892a4] tracking-widest">
-                  ~/portfolio/about.sh
-                </span>
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                  gap: "1px",
+                  background: "var(--border)",
+                  border: "1px solid var(--border)",
+                }}>
+                {stats.map((s, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      background: "var(--bg-primary)",
+                      padding: "1.25rem 1rem",
+                      textAlign: "center",
+                    }}>
+                    <div
+                      className="font-display"
+                      style={{
+                        fontSize: "1.75rem",
+                        color: "var(--accent)",
+                        lineHeight: 1,
+                        marginBottom: "0.25rem",
+                      }}>
+                      <CountUp end={s.value} suffix={s.suffix} />
+                    </div>
+                    <div
+                      className="font-mono-light"
+                      style={{
+                        fontSize: "0.62rem",
+                        letterSpacing: "0.12em",
+                        color: "var(--text-muted)",
+                        textTransform: "uppercase",
+                      }}>
+                      {s.label}
+                    </div>
+                  </div>
+                ))}
               </div>
-
-              {/* Terminal content */}
-              <div className="p-5 font-mono text-sm space-y-3">
-                <div>
-                  <span className="text-[#7b61ff]">❯</span>
-                  <span className="text-[#8892a4]"> whoami</span>
-                </div>
-
-                <div className="pl-4 space-y-1">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-[#00fff7]/40 text-xs">name</span>
-                    <span className="text-[#cdd6f4] text-lg font-bold tracking-wider">
-                      DINH GIA AN
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[#00fff7]/40 text-xs">role</span>
-                    <span className="text-[#00fff7]">{role}</span>
-                    <span className="w-[2px] h-4 bg-[#00fff7] animate-pulse inline-block" />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[#00fff7]/40 text-xs">loc </span>
-                    <span className="text-[#8892a4]">
-                      Thu Duc, Ho Chi Minh City
-                    </span>
-                    <span className="text-xs">🇻🇳</span>
-                  </div>
-                </div>
-
-                <div className="h-[1px] bg-[#00fff7]/10" />
-
-                <div>
-                  <span className="text-[#7b61ff]">❯</span>
-                  <span className="text-[#8892a4]"> cat bio.txt</span>
-                </div>
-
-                <div className="pl-4 text-[#8892a4] text-sm leading-relaxed space-y-2">
-                  <p>
-                    Passionate <span className="text-[#7b61ff]">Developer</span>{" "}
-                    with experience in both{" "}
-                    <span className="text-[#ff9d00]">Frontend</span> and{" "}
-                    <span className="text-[#00fff7]">Backend</span> development.
-                  </p>
-                  <p>
-                    Skilled in React, Next.js, TypeScript, Express.js, and
-                    database management. Building modern web applications with
-                    clean architecture.
-                  </p>
-                  <p className="text-[#00ff9d]">
-                    // Looking for opportunities to contribute &amp; grow 🚀
-                  </p>
-                </div>
-
-                <div>
-                  <span className="text-[#7b61ff]">❯</span>
-                  <span className="animate-pulse text-[#00fff7]">_</span>
-                </div>
-              </div>
-            </div>
-
-            {/* CTA */}
-            <div className="flex items-center gap-4">
-              <Menubar
-                className="rounded-sm border-0 p-0"
-                onClick={() =>
-                  window.open("/cv/Resume_DinhGiaAn.pdf", "_blank")
-                }>
-                <MenubarMenu>
-                  <MenubarTrigger
-                    className="
-                                   font-mono text-xs tracking-widest text-[#050a0e] bg-[#00fff7]
-                                   px-5 py-2.5 rounded-sm cursor-pointer
-                                   hover:bg-[#00fff7]/90 transition-colors
-                                   border-0 shadow-[0_0_20px_rgba(0,255,247,0.4)]
-                                   hover:shadow-[0_0_30px_rgba(0,255,247,0.6)]
-                                 ">
-                    ▸ VIEW RESUME
-                  </MenubarTrigger>
-                </MenubarMenu>
-              </Menubar>
-
-              <button
-                className="font-mono text-xs tracking-widest text-[#00fff7] border border-[#00fff7]/40
-                             px-5 py-2.5 rounded-sm hover:bg-[#00fff7]/10 hover:border-[#00fff7]
-                             transition-all duration-200 cursor-pointer"
-                onClick={() =>
-                  window.open(
-                    "https://mail.google.com/mail/?view=cm&fs=1&to=dinhgiaanforwork@gmail.com",
-                    "_blank"
-                  )
-                }>
-                CONTACT ME
-              </button>
-            </div>
-          </motion.div>
+            </ScrollInView>
+          </div>
         </div>
-      </section>
-    </ScrollInView>
+      </div>
+
+      {/* Responsive 2-col layout */}
+      <style>{`
+        @media (min-width: 900px) {
+          #hero-section > div > div:last-child {
+            grid-template-columns: 1fr 380px !important;
+          }
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+      `}</style>
+    </section>
   );
 };
 

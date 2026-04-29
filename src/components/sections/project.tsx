@@ -1,390 +1,302 @@
-import { ExternalLink, Github, Eye, ArrowUpRight, Youtube } from "lucide-react";
-import { CardBody, CardContainer, CardItem } from "../ui/3d-card";
+import { motion } from "framer-motion";
+import { ArrowUpRight, Github, ExternalLink, Youtube } from "lucide-react";
 import ScrollInView from "../scroll.inview";
 import ProjectImage from "../ui/project.img";
-import { motion } from "framer-motion";
 
-// Fix lỗi 1: CardBody không nhận style/onMouse* → wrap bằng div bên trong
-// Fix lỗi 2: type explicit cho event handler
-
-const projects = [
+const PROJECTS = [
   {
+    num: "01",
     title: "NovelNest",
-    subtitle: "Reading Book Online Platform",
-    description:
-      "A comprehensive online book reading platform with complete user management and payment integration. Features include user authentication, book catalog, reading interface, and admin dashboard.",
+    subtitle: "Online Book Reading Platform",
+    desc: "A full-stack EPUB reader with JWT auth, role-based access, PayOS payment gateway, and 95+ Lighthouse score in production.",
     image: "/assets/novelnest-homepage.webp",
     tech: [
       "Next.js",
       "TypeScript",
       "Tailwind CSS",
-      "PayOS",
-      "Axios",
-      "NextAuth",
-      "SWR",
       "Zustand",
-      "Node.js",
+      "SWR",
+      "PayOS",
       "Express.js",
       "MongoDB",
       "JWT",
     ],
-    sourceCode: [
-      {
-        label: "Frontend",
-        url: "https://github.com/dinhgiaan/NovelNest-Frontend",
-      },
-      {
-        label: "Backend",
-        url: "https://github.com/dinhgiaan/NovelNest-Backend",
-      },
-    ],
-    liveDemo: "https://www.novelnest.tech",
-    videoDemo: undefined as string | undefined,
-    accentColor: "#00fff7",
-    id: "01",
+    links: {
+      live: "https://www.novelnest.tech",
+      video: undefined as string | undefined,
+      github: [
+        {
+          label: "Client",
+          url: "https://github.com/dinhgiaan/NovelNest-Frontend",
+        },
+        {
+          label: "Server",
+          url: "https://github.com/dinhgiaan/NovelNest-Backend",
+        },
+      ],
+    },
+    tag: "Personal Project",
   },
   {
+    num: "02",
     title: "CodeGuru",
     subtitle: "Coding Video Course Platform",
-    description:
-      "Mobile-first design coding course platform with advanced animations and interactive learning features. Includes video streaming, progress tracking, and certificate generation.",
+    desc: "Team-led LMS platform with video streaming, Stripe payments, progress tracking, and certificate generation. Built in 2 months with a 3-person team.",
     image: "/assets/codeguru-homepage.webp",
     tech: [
       "Next.js",
       "TypeScript",
-      "Tailwind CSS",
-      "Axios",
       "Redux Toolkit",
-      "NextAuth",
       "Stripe",
-      "Node.js",
       "Express.js",
       "MongoDB",
       "Redis",
-      "JWT",
     ],
-    sourceCode: [
-      { label: "Frontend", url: "https://github.com/dinhgiaan/CodeGuru-FE" },
-      { label: "Backend", url: "https://github.com/dinhgiaan/CodeGuru-BE" },
-    ],
-    liveDemo: undefined as string | undefined,
-    videoDemo: "https://youtu.be/F69pqAsAizY",
-    accentColor: "#7b61ff",
-    id: "02",
+    links: {
+      live: undefined as string | undefined,
+      video: "https://youtu.be/F69pqAsAizY",
+      github: [
+        { label: "Client", url: "https://github.com/dinhgiaan/CodeGuru-FE" },
+        { label: "Server", url: "https://github.com/dinhgiaan/CodeGuru-BE" },
+      ],
+    },
+    tag: "Team Lead",
   },
 ];
 
 const ProjectSection = () => (
-  <ScrollInView>
-    <div className="container mx-auto px-4">
-      {/* Section header */}
-      <motion.div
-        className="flex items-center gap-3 mb-10"
-        initial={{ opacity: 0, x: -20 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}>
-        <span
-          className="font-mono text-sm tracking-widest"
-          style={{ color: "var(--accent-cyan)" }}>
-          03.
-        </span>
-        <span
-          className="font-mono text-sm tracking-widest uppercase"
-          style={{ color: "var(--text-secondary)" }}>
-          Featured Projects
-        </span>
+  <section id="projects-section" style={{ padding: "6rem 0" }}>
+    <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 2rem" }}>
+      {/* Header */}
+      <ScrollInView direction="up" delay={0}>
         <div
-          className="flex-1 h-[1px]"
           style={{
-            background:
-              "linear-gradient(90deg, var(--border-subtle), transparent)",
-          }}
-        />
-      </motion.div>
+            display: "flex",
+            alignItems: "center",
+            gap: "0.75rem",
+            marginBottom: "3rem",
+          }}>
+          <span className="section-label">03 — Work</span>
+          <span className="gold-line" style={{ flex: 1 }} />
+        </div>
+      </ScrollInView>
 
-      <div className="grid lg:grid-cols-2 gap-6 items-start">
-        {projects.map((project, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: index * 0.15 }}>
-            <CardContainer
-              className="h-full group rounded-sm overflow-hidden"
-              containerClassName="w-full h-full">
-              {/* Fix lỗi 1: style và onMouse* để trên div wrapper, không phải CardBody */}
-              <CardBody className="rounded-sm w-full h-full">
-                <div
-                  className="rounded-sm w-full h-full transition-all duration-500"
-                  style={{
-                    background: "var(--bg-card)",
-                    border: `1px solid var(--border-subtle)`,
-                  }}
-                  onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
-                    e.currentTarget.style.borderColor = `${project.accentColor}50`;
-                    e.currentTarget.style.boxShadow = `0 0 30px ${project.accentColor}15`;
-                  }}
-                  onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
-                    e.currentTarget.style.borderColor = "var(--border-subtle)";
-                    e.currentTarget.style.boxShadow = "none";
-                  }}>
-                  {/* Accent top bar */}
-                  <div
-                    className="h-[1px] w-full"
-                    style={{
-                      background: `linear-gradient(90deg, ${project.accentColor}, transparent)`,
-                      boxShadow: `0 0 8px ${project.accentColor}60`,
-                    }}
-                  />
-
-                  <div className="p-6 grid grid-rows-[auto_auto_1fr_auto_auto_auto] gap-4 min-h-[600px]">
-                    {/* Image */}
-                    <CardItem
-                      as="div"
-                      translateZ={10}
-                      className="relative h-48 w-full overflow-hidden rounded-sm">
-                      <ProjectImage src={project.image} alt={project.title} />
-
-                      <div
-                        className="absolute top-2 left-2 font-mono text-xs px-2 py-0.5 rounded-sm"
-                        style={{
-                          background: "var(--bg-card)",
-                          border: `1px solid ${project.accentColor}40`,
-                          color: project.accentColor,
-                        }}>
-                        #{project.id}
-                      </div>
-
-                      {(project.liveDemo || project.videoDemo) && (
-                        <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                          <a
-                            href={project.liveDemo ?? project.videoDemo}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-4 py-2 font-mono text-xs tracking-widest rounded-sm"
-                            style={{
-                              background: project.accentColor,
-                              color: "var(--bg-primary)",
-                              boxShadow: `0 0 20px ${project.accentColor}60`,
-                            }}>
-                            <Eye className="w-3.5 h-3.5" />
-                            {project.liveDemo ? "LIVE DEMO" : "VIDEO DEMO"}
-                          </a>
-                        </div>
-                      )}
-                    </CardItem>
-
-                    {/* Title */}
-                    <CardItem
-                      as="div"
-                      translateZ={8}
-                      className="min-h-[3rem] flex items-start flex-col gap-0.5">
-                      <h3
-                        className="font-mono font-bold text-xl tracking-widest"
-                        style={{ color: project.accentColor }}>
-                        {project.title}
-                      </h3>
-                      <p
-                        className="font-mono text-xs tracking-wider"
-                        style={{ color: "var(--text-secondary)" }}>
-                        {project.subtitle}
-                      </p>
-                    </CardItem>
-
-                    {/* Description */}
-                    <CardItem
-                      as="p"
-                      translateZ={5}
-                      className="text-sm leading-relaxed font-mono"
-                      style={{ color: "var(--text-secondary)" }}>
-                      {project.description}
-                    </CardItem>
-
-                    {/* Tech stack */}
-                    <CardItem translateZ={5}>
-                      <p
-                        className="font-mono text-xs mb-2 tracking-widest"
-                        style={{ color: "var(--text-muted)" }}>
-                        // TECH STACK
-                      </p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {project.tech.map((tech, i) => (
-                          <span
-                            key={i}
-                            className="font-mono text-[10px] px-2 py-0.5 rounded-sm tracking-wider"
-                            style={{
-                              background: `${project.accentColor}10`,
-                              border: `1px solid ${project.accentColor}25`,
-                              color: project.accentColor,
-                            }}>
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    </CardItem>
-
-                    {/* Source code */}
-                    <CardItem translateZ={5}>
-                      <p
-                        className="font-mono text-xs mb-2 tracking-widest"
-                        style={{ color: "var(--text-muted)" }}>
-                        // SOURCE CODE
-                      </p>
-                      <div className="space-y-1.5">
-                        {project.sourceCode.map((source, i) => (
-                          <a
-                            key={i}
-                            href={source.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-3 py-1.5 rounded-sm transition-all duration-200"
-                            style={{
-                              background:
-                                "color-mix(in srgb, var(--text-primary) 3%, transparent)",
-                              border: "1px solid var(--border-subtle)",
-                            }}
-                            onMouseEnter={(
-                              e: React.MouseEvent<HTMLAnchorElement>
-                            ) => {
-                              e.currentTarget.style.borderColor = `${project.accentColor}40`;
-                              e.currentTarget.style.background = `${project.accentColor}08`;
-                            }}
-                            onMouseLeave={(
-                              e: React.MouseEvent<HTMLAnchorElement>
-                            ) => {
-                              e.currentTarget.style.borderColor =
-                                "var(--border-subtle)";
-                              e.currentTarget.style.background =
-                                "color-mix(in srgb, var(--text-primary) 3%, transparent)";
-                            }}>
-                            <Github
-                              className="w-3 h-3"
-                              style={{ color: "var(--text-secondary)" }}
-                            />
-                            <span
-                              className="font-mono text-[10px] tracking-widest flex-1"
-                              style={{ color: "var(--text-secondary)" }}>
-                              {source.label}
-                            </span>
-                            <span
-                              className="font-mono text-[10px]"
-                              style={{ color: "var(--text-muted)" }}>
-                              {source.url.split("/").pop()}
-                            </span>
-                            <ExternalLink
-                              className="w-2.5 h-2.5"
-                              style={{ color: "var(--text-muted)" }}
-                            />
-                          </a>
-                        ))}
-                        {project.sourceCode.length < 3 && (
-                          <div className="h-8" />
-                        )}
-                      </div>
-                    </CardItem>
-
-                    {/* CTA */}
-                    <CardItem
-                      translateZ={5}
-                      className="min-h-[3rem] flex items-start">
-                      {project.liveDemo && (
-                        <a
-                          href={project.liveDemo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-full flex items-center justify-center gap-2 py-2.5 font-mono text-xs tracking-widest rounded-sm transition-all duration-200"
-                          style={{
-                            background: `${project.accentColor}15`,
-                            border: `1px solid ${project.accentColor}40`,
-                            color: project.accentColor,
-                          }}
-                          onMouseEnter={(
-                            e: React.MouseEvent<HTMLAnchorElement>
-                          ) => {
-                            e.currentTarget.style.background = `${project.accentColor}25`;
-                            e.currentTarget.style.boxShadow = `0 0 15px ${project.accentColor}20`;
-                          }}
-                          onMouseLeave={(
-                            e: React.MouseEvent<HTMLAnchorElement>
-                          ) => {
-                            e.currentTarget.style.background = `${project.accentColor}15`;
-                            e.currentTarget.style.boxShadow = "none";
-                          }}>
-                          <Eye className="w-3.5 h-3.5" />
-                          VIEW LIVE DEMO
-                        </a>
-                      )}
-                      {project.videoDemo && (
-                        <a
-                          href={project.videoDemo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-full flex items-center justify-center gap-2 py-2.5 font-mono text-xs tracking-widest rounded-sm transition-all duration-200"
-                          style={{
-                            background: `${project.accentColor}15`,
-                            border: `1px solid ${project.accentColor}40`,
-                            color: project.accentColor,
-                          }}
-                          onMouseEnter={(
-                            e: React.MouseEvent<HTMLAnchorElement>
-                          ) => {
-                            e.currentTarget.style.background = `${project.accentColor}25`;
-                          }}
-                          onMouseLeave={(
-                            e: React.MouseEvent<HTMLAnchorElement>
-                          ) => {
-                            e.currentTarget.style.background = `${project.accentColor}15`;
-                          }}>
-                          <Youtube className="w-3.5 h-3.5" color="red" />
-                          VIEW VIDEO DEMO
-                        </a>
-                      )}
-                    </CardItem>
-                  </div>
-                </div>
-              </CardBody>
-            </CardContainer>
-          </motion.div>
-        ))}
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "flex-end",
+          justifyContent: "space-between",
+          gap: "1rem",
+          marginBottom: "4rem",
+        }}>
+        <ScrollInView direction="up" delay={0.08}>
+          <h2
+            className="font-display"
+            style={{ fontSize: "clamp(2.2rem, 5vw, 4rem)", lineHeight: 1.1 }}>
+            Selected
+            <br />
+            <span style={{ fontStyle: "italic", color: "var(--accent)" }}>
+              projects.
+            </span>
+          </h2>
+        </ScrollInView>
+        <ScrollInView direction="up" delay={0.14}>
+          <a
+            href="https://github.com/dinhgiaan?tab=repositories"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.4rem",
+              fontSize: "0.7rem",
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: "var(--text-muted)",
+              textDecoration: "none",
+              fontFamily: "'DM Sans', sans-serif",
+              fontWeight: 500,
+              borderBottom: "1px solid var(--border-strong)",
+              paddingBottom: "2px",
+              transition: "color 0.2s",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.color = "var(--accent)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.color = "var(--text-muted)")
+            }>
+            All repositories <ArrowUpRight size={12} />
+          </a>
+        </ScrollInView>
       </div>
 
-      {/* View all */}
-      <motion.div
-        className="text-center mt-10"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 0.3 }}>
-        <button
-          className="inline-flex items-center gap-2 px-6 py-2.5 font-mono text-xs tracking-widest rounded-sm transition-all duration-200 group"
-          style={{
-            background: "var(--bg-card)",
-            border: "1px solid var(--border-subtle)",
-            color: "var(--accent-cyan)",
-          }}
-          onMouseEnter={(e: React.MouseEvent<HTMLButtonElement>) => {
-            e.currentTarget.style.borderColor = "var(--accent-cyan)";
-            e.currentTarget.style.boxShadow = "0 0 20px var(--glow-cyan)";
-          }}
-          onMouseLeave={(e: React.MouseEvent<HTMLButtonElement>) => {
-            e.currentTarget.style.borderColor = "var(--border-subtle)";
-            e.currentTarget.style.boxShadow = "none";
-          }}
-          onClick={() =>
-            window.open(
-              "https://github.com/dinhgiaan?tab=repositories",
-              "_blank"
-            )
-          }>
-          <Github className="w-3.5 h-3.5" />
-          VIEW ALL REPOSITORIES
-          <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
-        </button>
-      </motion.div>
+      {/* Project list */}
+      <div>
+        {PROJECTS.map((p) => (
+          <motion.article
+            key={p.num}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.6, delay: 0.05 }}
+            className="project-article">
+            {/* Image */}
+            <div
+              className="project-img-wrap"
+              onClick={() => {
+                const href = p.links.live || p.links.video;
+                if (href) window.open(href, "_blank");
+              }}>
+              <ProjectImage src={p.image} alt={p.title} />
+
+              {/* Overlay — hiện qua CSS :hover trên parent */}
+              <div className="project-overlay">
+                <span
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    color: "var(--accent)",
+                    fontSize: "0.75rem",
+                    letterSpacing: "0.15em",
+                    fontWeight: 500,
+                    textTransform: "uppercase",
+                  }}>
+                  {p.links.live ? (
+                    <>
+                      <ExternalLink size={14} /> View Live
+                    </>
+                  ) : (
+                    <>
+                      <Youtube size={14} /> Watch Demo
+                    </>
+                  )}
+                </span>
+              </div>
+
+              {/* Number badge */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: "1rem",
+                  left: "1rem",
+                  background: "var(--bg-primary)",
+                  border: "1px solid var(--border)",
+                  padding: "0.2rem 0.6rem",
+                }}>
+                <span
+                  className="font-mono-light"
+                  style={{
+                    fontSize: "0.65rem",
+                    color: "var(--accent)",
+                    letterSpacing: "0.15em",
+                  }}>
+                  {p.num}
+                </span>
+              </div>
+            </div>
+
+            {/* Info */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                gap: "1.25rem",
+              }}>
+              <span
+                className="font-mono-light"
+                style={{
+                  fontSize: "0.65rem",
+                  letterSpacing: "0.2em",
+                  color: "var(--text-muted)",
+                  textTransform: "uppercase",
+                }}>
+                {p.tag}
+              </span>
+
+              <div>
+                <h3
+                  className="font-display"
+                  style={{
+                    fontSize: "clamp(1.8rem, 4vw, 2.8rem)",
+                    lineHeight: 1.1,
+                    color: "var(--text-primary)",
+                    marginBottom: "0.35rem",
+                  }}>
+                  {p.title}
+                </h3>
+                <p
+                  style={{
+                    fontSize: "0.85rem",
+                    color: "var(--text-muted)",
+                    letterSpacing: "0.03em",
+                  }}>
+                  {p.subtitle}
+                </p>
+              </div>
+
+              <p
+                style={{
+                  fontSize: "0.9rem",
+                  lineHeight: 1.75,
+                  color: "var(--text-secondary)",
+                  maxWidth: "480px",
+                }}>
+                {p.desc}
+              </p>
+
+              <div className="flex flex-wrap gap-[0.4rem]">
+                {p.tech.map((t) => (
+                  <span key={t} className="tech-tag">
+                    {t}
+                  </span>
+                ))}
+              </div>
+
+              <div className="flex items-center gap-4 flex-wrap">
+                {p.links.live && (
+                  <a
+                    href={p.links.live}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-luxury"
+                    style={{ textDecoration: "none" }}>
+                    <span>Live Demo</span>
+                    <ExternalLink size={11} />
+                  </a>
+                )}
+                {p.links.video && (
+                  <a
+                    href={p.links.video}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-luxury"
+                    style={{ textDecoration: "none" }}>
+                    <span>Video Demo</span>
+                    <Youtube size={11} />
+                  </a>
+                )}
+                {p.links.github.map((g) => (
+                  <a
+                    key={g.label}
+                    href={g.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ghost-link">
+                    <Github size={12} />
+                    {g.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </motion.article>
+        ))}
+      </div>
     </div>
-  </ScrollInView>
+  </section>
 );
 
 export default ProjectSection;

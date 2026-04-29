@@ -1,228 +1,277 @@
-import ScrollInView from "../scroll.inview";
-import TechIcon from "../ui/tech.img";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import TechIcon from "../ui/tech.img";
+import ScrollInView from "../scroll.inview";
+
+/* ── Marquee banner công nghệ ── */
+const MARQUEE_TECHS = [
+  { name: "Next.js", tech: "nextjs" },
+  { name: "React", tech: "reactjs" },
+  { name: "TypeScript", tech: "typescript" },
+  { name: "Tailwind CSS", tech: "tailwindcss" },
+  { name: "Node.js", tech: "nodejs" },
+  { name: "Express.js", tech: "expressjs" },
+  { name: "MongoDB", tech: "mongodb" },
+  { name: "Redux Toolkit", tech: "redux" },
+  { name: "Figma", tech: "figma" },
+  { name: "Git", tech: "git" },
+  { name: "Postman", tech: "postman" },
+];
+
+const MarqueeItem = ({ name, tech }: { name: string; tech: string }) => (
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "0.6rem",
+      color: "var(--text-muted)",
+      whiteSpace: "nowrap",
+    }}>
+    <TechIcon tech={tech} alt={name} className="w-4 h-4 pointer-events-none" />
+    <span
+      className="font-mono-light"
+      style={{ fontSize: "0.8rem", letterSpacing: "0.08em" }}>
+      {name}
+    </span>
+    <span
+      style={{ marginLeft: "1.5rem", color: "var(--accent)", opacity: 0.4 }}>
+      ✦
+    </span>
+  </div>
+);
+
+/* ── Competency grid ── */
+const SKILLS = [
+  {
+    num: "01",
+    title: "Frontend",
+    desc: "Pixel-perfect interfaces with Next.js, React, TypeScript. Mobile-first, 90+ Lighthouse.",
+    tags: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "SCSS",
+      "Framer Motion",
+    ],
+  },
+  {
+    num: "02",
+    title: "Backend",
+    desc: "RESTful APIs, JWT auth, MongoDB. Clean architecture with Express.js.",
+    tags: ["Node.js", "Express.js", "MongoDB", "JWT", "REST API"],
+  },
+  {
+    num: "03",
+    title: "State & Data",
+    desc: "Complex state management patterns, optimized data fetching and caching.",
+    tags: ["Redux Toolkit", "Zustand", "SWR", "Axios", "React Query"],
+  },
+  {
+    num: "04",
+    title: "UI/UX & Tools",
+    desc: "From Figma design to polished component libraries. Agile workflows.",
+    tags: ["Figma", "MUI", "Shadcn", "Git", "Postman", "Vercel"],
+  },
+];
 
 const SkillsSection = () => {
-  const [activeCategory, setActiveCategory] = useState<number | null>(null);
-
-  const skillCategories = [
-    {
-      title: "Frontend",
-      code: "FE",
-      color: "#00fff7",
-      skills: [
-        { name: "ReactJS", tech: "reactjs" },
-        { name: "NextJS", tech: "nextjs" },
-        { name: "TypeScript", tech: "typescript" },
-      ],
-    },
-    {
-      title: "Backend",
-      code: "BE",
-      color: "#7b61ff",
-      skills: [
-        { name: "NodeJS", tech: "nodejs" },
-        { name: "ExpressJS", tech: "expressjs" },
-        { name: "MongoDB", tech: "mongodb" },
-      ],
-    },
-    {
-      title: "Design",
-      code: "UI",
-      color: "#ff2d78",
-      skills: [
-        { name: "TailwindCSS", tech: "tailwindcss" },
-        { name: "Figma", tech: "figma" },
-      ],
-    },
-    {
-      title: "DevOps",
-      code: "OPS",
-      color: "#00ff9d",
-      skills: [
-        { name: "Git", tech: "git" },
-        { name: "Postman", tech: "postman" },
-      ],
-    },
-  ];
-
-  const allSkills = skillCategories.flatMap((cat) =>
-    cat.skills.map((s) => ({ ...s, color: cat.color }))
-  );
+  const doubled = [...MARQUEE_TECHS, ...MARQUEE_TECHS];
 
   return (
-    <ScrollInView>
-      <section>
-        <div className="container mx-auto px-4">
-          {/* Section header */}
-          <motion.div
-            className="flex items-center gap-3 mb-10"
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}>
-            <span className="text-[#00fff7] font-mono text-sm tracking-widest">
-              02.
-            </span>
-            <span className="text-[#8892a4] font-mono text-sm tracking-widest uppercase">
-              Tech Stack
-            </span>
-            <div className="flex-1 h-[1px] bg-gradient-to-r from-[#00fff7]/30 to-transparent" />
-          </motion.div>
-
-          {/* Category cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-            {skillCategories.map((category, index) => {
-              const isActive = activeCategory === index;
-
-              return (
-                <motion.div
-                  key={category.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
-                  onHoverStart={() => setActiveCategory(index)}
-                  onHoverEnd={() => setActiveCategory(null)}
-                  whileHover={{ y: -4 }}
-                  className="cursor-pointer">
-                  <div
-                    className="relative h-full rounded-sm border transition-all duration-300 overflow-hidden"
-                    style={{
-                      background: "rgba(5, 20, 14, 0.8)",
-                      borderColor: isActive
-                        ? category.color
-                        : "rgba(0,255,247,0.1)",
-                      boxShadow: isActive
-                        ? `0 0 20px ${category.color}20`
-                        : "none",
-                    }}>
-                    {/* Top accent bar */}
-                    <div
-                      className="h-[1px] w-full transition-all duration-300"
-                      style={{
-                        background: `linear-gradient(90deg, ${category.color}, transparent)`,
-                        opacity: isActive ? 1 : 0.3,
-                        boxShadow: isActive
-                          ? `0 0 8px ${category.color}`
-                          : "none",
-                      }}
-                    />
-
-                    <div className="p-5">
-                      {/* Header */}
-                      <div className="flex items-center justify-between mb-4">
-                        <div>
-                          <div
-                            className="font-mono text-xs tracking-widest mb-1"
-                            style={{ color: `${category.color}60` }}>
-                            [{category.code}]
-                          </div>
-                          <h3
-                            className="font-mono font-bold text-base tracking-wider"
-                            style={{
-                              color: isActive ? category.color : "#cdd6f4",
-                            }}>
-                            {category.title}
-                          </h3>
-                        </div>
-
-                        {/* Corner decoration */}
-                        <div className="w-8 h-8 relative opacity-30">
-                          <div
-                            className="absolute top-0 right-0 w-full h-[1px]"
-                            style={{ background: category.color }}
-                          />
-                          <div
-                            className="absolute top-0 right-0 w-[1px] h-full"
-                            style={{ background: category.color }}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Skills */}
-                      <div className="space-y-2">
-                        {category.skills.map((skill) => (
-                          <div
-                            key={skill.name}
-                            className="flex items-center gap-2.5 px-3 py-1.5 rounded-sm"
-                            style={{
-                              background: isActive
-                                ? `${category.color}08`
-                                : "#012411",
-                              border: `1px solid ${
-                                isActive ? `${category.color}20` : "#012411"
-                              }`,
-                            }}>
-                            <TechIcon
-                              tech={skill.tech}
-                              alt={skill.name}
-                              className="w-3.5 h-3.5"
-                            />
-                            <span className="font-mono text-xs text-[#8892a4] tracking-wide">
-                              {skill.name}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
+    <section id="skills-section" style={{ paddingBottom: "0" }}>
+      {/* ── Section header ── */}
+      <div
+        style={{
+          maxWidth: "1200px",
+          margin: "0 auto",
+          padding: "0 2rem 3rem",
+        }}>
+        <ScrollInView direction="up" delay={0}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.75rem",
+              marginBottom: "3rem",
+            }}>
+            <span className="section-label">02 — Expertise</span>
+            <span className="gold-line" style={{ flex: 1 }} />
           </div>
+        </ScrollInView>
 
-          {/* All technologies strip */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3 }}>
-            <div className="font-mono text-xs text-[#8892a4] tracking-widest mb-4 text-center">
-              // ALL TECHNOLOGIES
-            </div>
-
-            <div className="flex flex-wrap justify-center gap-2.5">
-              {allSkills.map((skill, index) => (
-                <motion.div
-                  key={`${skill.tech}-${index}`}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: index * 0.04 }}
-                  whileHover={{ scale: 1.05, y: -2 }}>
-                  <div
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-sm border transition-all duration-200 cursor-default"
-                    style={{
-                      background: "rgba(5,10,14,0.8)",
-                      borderColor: "rgba(0,255,247,0.15)",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = skill.color;
-                      e.currentTarget.style.boxShadow = `0 0 10px ${skill.color}20`;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor =
-                        "rgba(0,255,247,0.15)";
-                      e.currentTarget.style.boxShadow = "none";
-                    }}>
-                    <TechIcon
-                      tech={skill.tech}
-                      alt={skill.name}
-                      className="w-4 h-4"
-                    />
-                    <span className="font-mono text-xs text-[#cdd6f4] tracking-wide">
-                      {skill.name}
-                    </span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
+        {/* ── Heading editorial ── */}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "flex-end",
+            justifyContent: "space-between",
+            gap: "1.5rem",
+            marginBottom: "4rem",
+          }}>
+          <ScrollInView direction="up" delay={0.08}>
+            <h2
+              className="font-display"
+              style={{
+                fontSize: "clamp(2.2rem, 5vw, 4rem)",
+                lineHeight: 1.1,
+                color: "var(--text-primary)",
+              }}>
+              Crafting digital
+              <br />
+              <span style={{ fontStyle: "italic", color: "var(--accent)" }}>
+                experiences.
+              </span>
+            </h2>
+          </ScrollInView>
+          <ScrollInView direction="up" delay={0.16}>
+            <p
+              style={{
+                maxWidth: "340px",
+                color: "var(--text-muted)",
+                lineHeight: 1.7,
+                fontSize: "0.9rem",
+              }}>
+              Full-stack leaning frontend developer focused on building fast,
+              beautiful, maintainable web applications.
+            </p>
+          </ScrollInView>
         </div>
-      </section>
-    </ScrollInView>
+
+        {/* ── 4-col grid ── */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gap: "1px",
+            background: "var(--border)",
+            border: "1px solid var(--border)",
+          }}>
+          {SKILLS.map((s, i) => (
+            <motion.div
+              key={s.num}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              style={{
+                background: "var(--bg-primary)",
+                padding: "2rem 1.75rem",
+                cursor: "default",
+                transition: "background 0.3s ease",
+              }}
+              whileHover={{ backgroundColor: "var(--bg-card)" } as never}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  justifyContent: "space-between",
+                  marginBottom: "1.25rem",
+                }}>
+                <span
+                  className="font-mono-light"
+                  style={{
+                    fontSize: "0.65rem",
+                    color: "var(--accent)",
+                    letterSpacing: "0.2em",
+                  }}>
+                  {s.num}
+                </span>
+                <span
+                  style={{
+                    width: "20px",
+                    height: "1px",
+                    background: "var(--accent)",
+                    marginTop: "0.5rem",
+                  }}
+                />
+              </div>
+              <h3
+                className="font-display"
+                style={{
+                  fontSize: "1.4rem",
+                  color: "var(--text-primary)",
+                  marginBottom: "0.75rem",
+                  fontWeight: 500,
+                }}>
+                {s.title}
+              </h3>
+              <p
+                style={{
+                  fontSize: "0.82rem",
+                  color: "var(--text-muted)",
+                  lineHeight: 1.7,
+                  marginBottom: "1.25rem",
+                }}>
+                {s.desc}
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+                {s.tags.map((t) => (
+                  <span
+                    key={t}
+                    style={{
+                      fontSize: "0.62rem",
+                      fontWeight: 500,
+                      letterSpacing: "0.08em",
+                      padding: "0.2rem 0.6rem",
+                      border: "1px solid var(--border-strong)",
+                      color: "var(--text-secondary)",
+                      fontFamily: "'DM Mono', monospace",
+                    }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Marquee banner ── */}
+      <ScrollInView direction="up" delay={0.1}>
+        <div
+          style={{
+            borderTop: "1px solid var(--border)",
+            borderBottom: "1px solid var(--border)",
+            padding: "1.25rem 0",
+            overflow: "hidden",
+            position: "relative",
+          }}>
+          {/* gradient fade edges */}
+          <div
+            style={{
+              position: "absolute",
+              left: 0,
+              top: 0,
+              bottom: 0,
+              width: "80px",
+              background:
+                "linear-gradient(90deg, var(--bg-primary), transparent)",
+              zIndex: 1,
+              pointerEvents: "none",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              right: 0,
+              top: 0,
+              bottom: 0,
+              width: "80px",
+              background:
+                "linear-gradient(-90deg, var(--bg-primary), transparent)",
+              zIndex: 1,
+              pointerEvents: "none",
+            }}
+          />
+          <div className="marquee-track" style={{ gap: "3rem" }}>
+            {doubled.map((t, i) => (
+              <MarqueeItem key={i} {...t} />
+            ))}
+          </div>
+        </div>
+      </ScrollInView>
+    </section>
   );
 };
 
